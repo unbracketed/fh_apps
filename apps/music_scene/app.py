@@ -1,10 +1,10 @@
-from fasthtml.common import Div, Titled, Title, Link, A, fast_app, serve, Label, Span, Textarea, Input
+from fasthtml.common import Div, Titled, Link, A, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
 from apps.music_scene.components.events import EventDetails
-from apps.music_scene.components.layout import Container, layout
+from apps.music_scene.components.layout import Container, layout, Grid
 from apps.music_scene.models import Event, events
-from components.forms import EventForm, AddEventForm, FieldGroup, LabeledInput, LabeledSelect
+from components.forms import EventForm, AddEventForm
 
 head_section = (
         Link(
@@ -12,7 +12,13 @@ head_section = (
             href="/static/base.css",
         ),
 )
-app, rt = fast_app(hdrs=head_section, pico=False)
+
+exception_handlers={
+    404: lambda req, exc: Titled("404: I don't exist!"),
+    418: lambda req, exc: Titled("418: I'm a teapot!")
+}
+
+app, rt = fast_app(hdrs=head_section, pico=False, exception_handlers=exception_handlers)
 
 
 @rt("/static/{fname:path}.{ext:static}")
@@ -23,10 +29,11 @@ async def get(fname:str, ext:str): return FileResponse(f'/static/{fname}.{ext}')
 @layout()
 def get():
     upcoming_events = events(order_by='date')
-    return (
-        *upcoming_events,
-        A("Add New Event", cls="btn btn-primary mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600", href="/add_event"),
-    )
+    return (Grid(
+        Div(*upcoming_events),
+        Div(A("Add New Event", cls="btn btn-primary mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600", href="/add_event")),
+        cols=2
+    ),)
 
 @rt("/add_event")
 @layout(title="Add Event")
