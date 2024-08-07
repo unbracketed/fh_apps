@@ -53,3 +53,29 @@ def FieldGroup(*fields):
             *fields
         )
     )
+
+
+def Example():
+    return Titled("Form Test", FieldGroup(
+            LabeledInput('Full Name', 'full_name'),
+            LabeledInput('Email address', 'email', placeholder='john@example.com'),
+            LabeledInput('When is your event', 'date', _type='date'),
+            LabeledSelect('What type of event is it?', 'event_type'),
+
+            Label(cls='block')(
+                Span('Additional details', cls='text-gray-700'),
+                Textarea(rows='3',
+                         cls='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50')
+            ),
+            Div(cls='block')(
+                Div(cls='mt-2')(
+                    Div(
+                        Label(cls='inline-flex items-center')(
+                            Input(type='checkbox', checked='',
+                                  cls='rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50'),
+                            Span('Email me news and special offers', cls='ml-2')
+                        )
+                    )
+                )
+            )
+    ))

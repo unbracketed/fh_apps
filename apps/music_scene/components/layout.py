@@ -1,6 +1,6 @@
 import functools
 
-from fasthtml.common import Div, H1
+from fasthtml.common import Div, H1, Title
 
 
 def Container(*args, fluid=False, center=True, padding=True, **kwargs):
@@ -55,7 +55,7 @@ def Layout(*args, **kwargs):
     """Layout for the blog, but can be adapted to anything"""
     #return Title(title), blog_header(), Main(*args, **kwargs), blog_footer()
     title = kwargs.get('title', "Music Scene Calendar")
-    return Container( H1(cls="text-3xl py-4")(title), *args, **kwargs)
+    return Title(title), Container( H1(cls="text-3xl py-4")(title), *args, **kwargs)
 
 
 
