@@ -18,7 +18,7 @@ def EventForm(action, submit_label="Submit"):
                 "Venue", "venue", placeholder="Venue name or location of event"
             ),
             LabeledInput("URL", "url"),
-            Textarea(id="description", placeholder="Event Description", rows=4),
+            LabeledTextarea("Event Description", "description"),
             SubmitBtn(submit_label),
         )
     )
@@ -57,24 +57,22 @@ def _class_str(c: list) -> str:
     return " ".join(c)
 
 
-textarea_classes = [
-    "mt-1",
-    "block",
-    "w-full",
-    "rounded-md",
-    "border-gray-300",
-    "shadow-sm",
-    "focus:border-indigo-300",
-    "focus:ring",
-    "focus:ring-indigo-200",
-    "focus:ring-opacity-50",
-]
-
-
-def LabeledTextarea(label, _id, placeholder="", required=False):
+def LabeledTextarea(label, _id, placeholder="", required=False, rows=3):
+    textarea_classes = [
+        "mt-1",
+        "block",
+        "w-full",
+        "rounded-md",
+        "border-gray-300",
+        "shadow-sm",
+        "focus:border-indigo-300",
+        "focus:ring",
+        "focus:ring-indigo-200",
+        "focus:ring-opacity-50",
+    ]
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
-        Textarea(rows="3", cls=_class_str(textarea_classes, required=required)),
+        Textarea(id=_id, rows=rows, cls=_class_str(textarea_classes), required=required, placeholder=placeholder),
     )
 
 

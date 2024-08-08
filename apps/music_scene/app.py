@@ -88,7 +88,7 @@ def get(event_id: int):
     return Titled(
         f"Edit Event: {event.title}",
         Container(
-            fill_form(EventForm(f"/edit_event/{event_id}", "Edit Event"), event),
+            fill_form(EventForm(f"/edit_event/{event_id}", "Save Event"), event),
             event,
         ),
     )
