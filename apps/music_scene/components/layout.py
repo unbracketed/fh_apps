@@ -25,6 +25,47 @@ def Container(*args, fluid=False, center=True, padding=True, **kwargs):
     return Div(*args, cls=" ".join(filter(None, classes)), **kwargs)
 
 
+# This is here to workaround dynamically generated tailwind classes not being found by the tool
+_cols_options = [
+        "grid-cols-1",
+        "grid-cols-2",
+        "grid-cols-3",
+        "grid-cols-4",
+        "grid-cols-5",
+        "grid-cols-6",
+        "grid-cols-7",
+        "grid-cols-8",
+        "grid-cols-9",
+        "grid-cols-10",
+        "grid-cols-11",
+        "grid-cols-12",
+        "sm:grid-cols-1",
+        "sm:grid-cols-2",
+        "sm:grid-cols-3",
+        "sm:grid-cols-4",
+        "sm:grid-cols-5",
+        "sm:grid-cols-6",
+        "sm:grid-cols-7",
+        "sm:grid-cols-8",
+        "sm:grid-cols-9",
+        "sm:grid-cols-10",
+        "sm:grid-cols-11",
+        "sm:grid-cols-12",
+        "md:grid-cols-1",
+        "md:grid-cols-2",
+        "md:grid-cols-3",
+        "md:grid-cols-4",
+        "md:grid-cols-5",
+        "md:grid-cols-6",
+        "md:grid-cols-7",
+        "md:grid-cols-8",
+        "md:grid-cols-9",
+        "md:grid-cols-10",
+        "md:grid-cols-11",
+        "md:grid-cols-12",
+    ]
+
+
 def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
     """
     A flexible Grid component using Tailwind CSS classes.
@@ -35,13 +76,14 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
     :param responsive: Whether to make the grid responsive
     :param kwargs: Additional HTML attributes - use "cls" for additional classes
     """
-    if isinstance(cols, dict):
-        col_classes = " ".join([f"{bp}:grid-cols-{n}" for bp, n in cols.items()])
-    else:
-        col_classes = f"grid-cols-{cols}"
+
+    # if isinstance(cols, dict):
+    #     col_classes = " ".join([f"{bp}:grid-cols-{n}" for bp, n in cols.items()])
+    # else:
+    col_classes = f"grid-cols-{cols}"
 
     if responsive and isinstance(cols, int):
-        col_classes = f"grid-cols-1 sm:grid-cols-2 md:{col_classes}"
+         col_classes = f"grid-cols-1 sm:{col_classes}"
 
     classes = [
         "grid",

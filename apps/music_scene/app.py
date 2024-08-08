@@ -31,9 +31,18 @@ async def get(fname: str, ext: str):
 @layout()
 def get():
     upcoming_events = events(order_by="date")
+    compact_event_list = [
+        Grid(cols=4, cls="border-b-2")(
+            Div(f"{event.title}: {event.artist}" if event.artist else event.title),
+            Div(event.date),
+            Div(f"{event.start_time}" if event.start_time else "-"),
+            Div(A(href=f"/edit_event/{event.id}")("Edit"), A(href=f"/event/{event.id}")("View"))
+        )
+        for event in upcoming_events
+    ]
     return (
-        Grid(
-            Div(*upcoming_events),
+        Grid(cols=4)(
+            Div(cls="col-span-3")(*compact_event_list),
             ControlPanel(),
         ),
     )
