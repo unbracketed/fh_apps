@@ -1,6 +1,6 @@
 from fasthtml.common import *
 
-from apps.music_scene.components.elements import SubmitBtn
+from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
 
 
 def EventForm(action, submit_label="Submit"):
@@ -20,6 +20,9 @@ def EventForm(action, submit_label="Submit"):
             LabeledInput("URL", "url"),
             LabeledTextarea("Event Description", "description"),
             SubmitBtn(submit_label),
+            HoverBtnPrimary(
+                "Cancel", hx_get="/control-panel", hx_target="#control-panel"
+            ),
         )
     )
 
@@ -72,7 +75,13 @@ def LabeledTextarea(label, _id, placeholder="", required=False, rows=3):
     ]
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
-        Textarea(id=_id, rows=rows, cls=_class_str(textarea_classes), required=required, placeholder=placeholder),
+        Textarea(
+            id=_id,
+            rows=rows,
+            cls=_class_str(textarea_classes),
+            required=required,
+            placeholder=placeholder,
+        ),
     )
 
 

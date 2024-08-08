@@ -2,9 +2,8 @@ from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
-from apps.music_scene.components.elements import HoverBtnPrimary
 from apps.music_scene.components.events import EventDetails
-from apps.music_scene.components.layout import Container, layout, Grid
+from apps.music_scene.components.layout import Container, layout, Grid, ControlPanel
 from apps.music_scene.models import Event, events
 from components.forms import EventForm
 
@@ -35,16 +34,14 @@ def get():
     return (
         Grid(
             Div(*upcoming_events),
-            Div(_id="control-panel", cols=2)(
-                HoverBtnPrimary(
-                    "Add Event",
-                    href="/add_event",
-                    hx_target="#control-panel",
-                    hx_get="/add_event",
-                )
-            ),
+            ControlPanel(),
         ),
     )
+
+
+@rt("/control-panel")
+def get():
+    return ControlPanel()
 
 
 @rt("/add_event")
