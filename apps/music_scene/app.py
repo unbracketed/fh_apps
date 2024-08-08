@@ -1,6 +1,7 @@
-from fasthtml.common import Div, Titled, Link, A, fast_app, serve
+from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
+from apps.music_scene.components.elements import HoverBtnPrimary
 from apps.music_scene.components.events import EventDetails
 from apps.music_scene.components.layout import Container, layout, Grid
 from apps.music_scene.models import Event, events
@@ -29,26 +30,22 @@ async def get(fname:str, ext:str): return FileResponse(f'/static/{fname}.{ext}')
 @layout()
 def get():
     upcoming_events = events(order_by='date')
-    return (Grid(
+    return (
+        Grid(
         Div(*upcoming_events),
-        Div(_id="control-panel", cols=2)(
-            A(cls="btn btn-primary mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600",
-              href="/add_event",
-              hx_target="#control-panel",
-              hx_get="/add_event")(
-                "Add New Event"
+            Div(_id="control-panel", cols=2)(
+                HoverBtnPrimary("Add Event",
+                  href="/add_event",
+                  hx_target="#control-panel",
+                  hx_get="/add_event")
             )
-        )
-    ),)
+        ),
+    )
 
 @rt("/add_event")
 def get():
-    return Titled(
-        "Add New Event",
-        Div(
-            AddEventForm()
-        )
-    )
+    return H2(cls="text-xl")("Add New Event"), Div(AddEventForm())
+
 
 @rt("/add_event")
 def post(title: str, artist: str, date: str, start_time: str, url: str, venue: str, description: str):

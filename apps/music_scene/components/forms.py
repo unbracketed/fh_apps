@@ -1,5 +1,7 @@
 from fasthtml.common import *
 
+from apps.music_scene.components.elements import HoverBtnPrimary, SubmitBtn
+
 
 def EventForm(event):
     return Form(action=f"/edit_event/{event.id}", method="post", cls="space-y-4")(
@@ -17,15 +19,15 @@ def EventForm(event):
 def AddEventForm():
     return Form(action="/add_event", method="post", cls="space-y-4")(
         FieldGroup(
-            LabeledInput("Event Title", "title", required=True),
-            #Input(id="title", placeholder="Event Title", required=True),
-            Input(id="artist", placeholder="Artist Name"),
-            Input(id="date", type="date", required=True),
-            Input(id="start_time", type="time"),
-            Input(id="venue", placeholder="Venue"),
-            Input(id="url", placeholder="URL"),
+        LabeledInput("Event Title", "title", required=True),
+            LabeledInput("Artist", "artist", placeholder="Artist, band name, or  name of performing act"),
+            LabeledInput("Date", "date", _type="date", required=True),
+            LabeledInput("Start Time", "start_time", _type="time"),
+            LabeledInput("Venue", "venue", placeholder="Venue name or location of event"),
+            LabeledInput("URL", "url"),
+
             Textarea(id="description", placeholder="Event Description", rows=4),
-            Button("Add Event", type="submit", cls="btn btn-primary"),
+            SubmitBtn("Add Event"),
         )
     )
 
