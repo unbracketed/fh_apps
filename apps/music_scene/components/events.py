@@ -2,6 +2,7 @@ from datetime import datetime
 from fastcore.basics import patch
 from fasthtml.common import Card, P, Div, H2, A, H1
 
+from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
 
 
@@ -60,3 +61,22 @@ def EventDetails(event: Event):
             cls="mt-6",
         ),
     )
+
+
+def CompactEventList(events):
+    return [
+        Grid(cols=4, cls="border-b-2 py-1")(
+            Div(f"{event.title}: {event.artist}" if event.artist else event.title),
+            Div(event.date),
+            Div(f"{event.start_time}" if event.start_time else "-"),
+            Div(
+                A(href=f"/edit_event/{event.id}", cls="bg-rose-200 inline-block px-1")(
+                    "Edit"
+                ),
+                A(href=f"/event/{event.id}", cls="bg-emerald-200 inline-block px-1")(
+                    "View"
+                ),
+            ),
+        )
+        for event in events
+    ]

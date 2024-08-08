@@ -9,12 +9,12 @@ hover_btn_classes = [
     "btn",
     "btn-primary",
     "inline-block",
-    "bg-blue-500",
+    "bg-orange-500",
     "text-white",
     "py-2",
     "px-4",
     "rounded",
-    "hover:bg-blue-600",
+    "hover:bg-orange-600",
 ]
 
 

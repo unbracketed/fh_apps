@@ -2,24 +2,36 @@ from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
-from apps.music_scene.components.events import EventDetails
+from apps.music_scene.components.events import EventDetails, CompactEventList
 from apps.music_scene.components.layout import Container, layout, Grid, ControlPanel
 from apps.music_scene.models import Event, events
 from components.forms import EventForm
 
 head_section = (
+    Link(rel="preconnect", href="https://fonts.googleapis.com"),
+    Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=True),
+    Link(
+        rel="stylesheet",
+        href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Karla:ital,wght@0,200..800;1,200..800&display=swap",
+    ),
     Link(
         rel="stylesheet",
         href="/static/base.css",
     ),
 )
 
+
 exception_handlers = {
     404: lambda req, exc: Titled("404: I don't exist!"),
     418: lambda req, exc: Titled("418: I'm a teapot!"),
 }
 
-app, rt = fast_app(hdrs=head_section, pico=False, exception_handlers=exception_handlers)
+app, rt = fast_app(
+    hdrs=head_section,
+    pico=False,
+    exception_handlers=exception_handlers,
+    bodykw={"cls": "bg-orange-50"},
+)
 
 
 @rt("/static/{fname:path}.{ext:static}")
@@ -31,18 +43,15 @@ async def get(fname: str, ext: str):
 @layout()
 def get():
     upcoming_events = events(order_by="date")
-    compact_event_list = [
-        Grid(cols=4, cls="border-b-2")(
-            Div(f"{event.title}: {event.artist}" if event.artist else event.title),
-            Div(event.date),
-            Div(f"{event.start_time}" if event.start_time else "-"),
-            Div(A(href=f"/edit_event/{event.id}")("Edit"), A(href=f"/event/{event.id}")("View"))
-        )
-        for event in upcoming_events
-    ]
+
     return (
         Grid(cols=4)(
-            Div(cls="col-span-3")(*compact_event_list),
+            Div(id="event-list", cls="col-span-3")(
+                A(href="/full-view", hx_get="/full-view", hx_target="#event-list")(
+                    "Full View"
+                ),
+                *CompactEventList(upcoming_events),
+            ),
             ControlPanel(),
         ),
     )
@@ -51,6 +60,21 @@ def get():
 @rt("/control-panel")
 def get():
     return ControlPanel()
+
+
+@rt("/full-view")
+def get():
+    return A(href="/compact-view", hx_get="/compact-view", hx_target="#event-list")(
+        "Compact View"
+    ), Div(*events(order_by="date"))
+
+
+@rt("/compact-view")
+def get():
+    return Div(
+        A(href="/full-view", hx_get="/full-view", hx_target="#event-list")("Full View"),
+        *CompactEventList(events(order_by="date")),
+    )
 
 
 @rt("/add_event")
