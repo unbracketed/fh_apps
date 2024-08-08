@@ -31,12 +31,17 @@ def get():
     upcoming_events = events(order_by='date')
     return (Grid(
         Div(*upcoming_events),
-        Div(A("Add New Event", cls="btn btn-primary mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600", href="/add_event")),
-        cols=2
+        Div(_id="control-panel", cols=2)(
+            A(cls="btn btn-primary mt-6 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600",
+              href="/add_event",
+              hx_target="#control-panel",
+              hx_get="/add_event")(
+                "Add New Event"
+            )
+        )
     ),)
 
 @rt("/add_event")
-@layout(title="Add Event")
 def get():
     return Titled(
         "Add New Event",
