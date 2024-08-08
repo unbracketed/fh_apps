@@ -10,7 +10,7 @@ events_schema = dict(
     venue=str,
     description=str,
     url=str,
-    pk='id'
+    pk="id",
 )
 
 

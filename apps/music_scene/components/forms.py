@@ -1,91 +1,115 @@
 from fasthtml.common import *
 
-from apps.music_scene.components.elements import HoverBtnPrimary, SubmitBtn
+from apps.music_scene.components.elements import SubmitBtn
 
 
-def EventForm(event):
-    return Form(action=f"/edit_event/{event.id}", method="post", cls="space-y-4")(
-        Input(id="title", value=event.title, required=True),
-        Input(id="artist", value=event.artist),
-        Input(id="date", type="date", value=event.date, required=True),
-        Input(id="start_time", type="time", value=event.start_time),
-        Input(id="venue", value=event.venue),
-        Input(id="url", value=event.url),
-        Textarea(id="description", value=event.description, rows=4),
-        Hidden(id="id", value=event.id),
-        Button("Update Event", type="submit"),
-    )
-
-def AddEventForm():
+def EventForm():
     return Form(action="/add_event", method="post", cls="space-y-4")(
         FieldGroup(
-        LabeledInput("Event Title", "title", required=True),
-            LabeledInput("Artist", "artist", placeholder="Artist, band name, or  name of performing act"),
+            LabeledInput("Event Title", "title", required=True),
+            LabeledInput(
+                "Artist",
+                "artist",
+                placeholder="Artist, band name, or  name of performing act",
+            ),
             LabeledInput("Date", "date", _type="date", required=True),
             LabeledInput("Start Time", "start_time", _type="time"),
-            LabeledInput("Venue", "venue", placeholder="Venue name or location of event"),
+            LabeledInput(
+                "Venue", "venue", placeholder="Venue name or location of event"
+            ),
             LabeledInput("URL", "url"),
-
             Textarea(id="description", placeholder="Event Description", rows=4),
             SubmitBtn("Add Event"),
         )
     )
 
 
-def LabeledInput(label, _id, _type='text', placeholder='', required=False):
-    return Label(cls='block')(
-        Span(label, cls='text-gray-700'),
+def LabeledInput(label, _id, _type="text", placeholder="", required=False):
+    return Label(cls="block")(
+        Span(label, cls="text-gray-700"),
         Input(
             id=_id,
             type=_type,
             placeholder=placeholder,
             required=required,
-            cls='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50')
+            cls="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+        ),
     )
+
 
 def LabeledSelect(label, _id, options=[]):
-    options = (Option('Corporate event'),
-            Option('Wedding'),
-            Option('Birthday'),
-            Option('Other'))
-    return Label(cls='block')(
-        Span(label, cls='text-gray-700'),
+    options = (
+        Option("Corporate event"),
+        Option("Wedding"),
+        Option("Birthday"),
+        Option("Other"),
+    )
+    return Label(cls="block")(
+        Span(label, cls="text-gray-700"),
         Select(
             id=_id,
-            cls='block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50')(
-            *options
-        )
-    ),
+            cls="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+        )(*options),
+    )
+
+
+def _class_str(c: list) -> str:
+    return " ".join(c)
+
+
+textarea_classes = [
+    "mt-1",
+    "block",
+    "w-full",
+    "rounded-md",
+    "border-gray-300",
+    "shadow-sm",
+    "focus:border-indigo-300",
+    "focus:ring",
+    "focus:ring-indigo-200",
+    "focus:ring-opacity-50",
+]
+
+
+def LabeledTextarea(label, _id, placeholder="", required=False):
+    return Label(cls="block")(
+        Span(label, cls="text-gray-700"),
+        Textarea(rows="3", cls=_class_str(textarea_classes, required=required)),
+    )
+
 
 def FieldGroup(*fields):
-    return Div(cls='mt-8 max-w-md')(
-        Div(cls='grid grid-cols-1 gap-6')(
-            *fields
-        )
-    )
+    return Div(cls="mt-8 max-w-md")(Div(cls="grid grid-cols-1 gap-6")(*fields))
 
 
 def Example():
-    return Titled("Form Test", FieldGroup(
-            LabeledInput('Full Name', 'full_name'),
-            LabeledInput('Email address', 'email', placeholder='john@example.com'),
-            LabeledInput('When is your event', 'date', _type='date'),
-            LabeledSelect('What type of event is it?', 'event_type'),
-
-            Label(cls='block')(
-                Span('Additional details', cls='text-gray-700'),
-                Textarea(rows='3',
-                         cls='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50')
+    return Titled(
+        "Form Test",
+        FieldGroup(
+            LabeledInput("Full Name", "full_name"),
+            LabeledInput("Email address", "email", placeholder="john@example.com"),
+            LabeledInput("When is your event", "date", _type="date"),
+            LabeledSelect("What type of event is it?", "event_type"),
+            Label(cls="block")(
+                Span("Additional details", cls="text-gray-700"),
+                Textarea(
+                    rows="3",
+                    cls="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
+                ),
             ),
-            Div(cls='block')(
-                Div(cls='mt-2')(
+            Div(cls="block")(
+                Div(cls="mt-2")(
                     Div(
-                        Label(cls='inline-flex items-center')(
-                            Input(type='checkbox', checked='',
-                                  cls='rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50'),
-                            Span('Email me news and special offers', cls='ml-2')
+                        Label(cls="inline-flex items-center")(
+                            Input(
+                                type="checkbox",
+                                checked="",
+                                cls="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-offset-0 focus:ring-indigo-200 focus:ring-opacity-50",
+                            ),
+                            Span("Email me news and special offers", cls="ml-2"),
                         )
                     )
                 )
-            )
-    ))
+            ),
+        ),
+    )
