@@ -3,8 +3,8 @@ from fasthtml.common import *
 from apps.music_scene.components.elements import SubmitBtn
 
 
-def EventForm():
-    return Form(action="/add_event", method="post", cls="space-y-4")(
+def EventForm(action, submit_label="Submit"):
+    return Form(action=action, method="post", cls="space-y-4")(
         FieldGroup(
             LabeledInput("Event Title", "title", required=True),
             LabeledInput(
@@ -19,7 +19,7 @@ def EventForm():
             ),
             LabeledInput("URL", "url"),
             Textarea(id="description", placeholder="Event Description", rows=4),
-            SubmitBtn("Add Event"),
+            SubmitBtn(submit_label),
         )
     )
 

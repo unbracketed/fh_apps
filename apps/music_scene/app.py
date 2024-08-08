@@ -1,3 +1,4 @@
+from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
@@ -5,7 +6,7 @@ from apps.music_scene.components.elements import HoverBtnPrimary
 from apps.music_scene.components.events import EventDetails
 from apps.music_scene.components.layout import Container, layout, Grid
 from apps.music_scene.models import Event, events
-from components.forms import EventForm, EventForm
+from components.forms import EventForm
 
 head_section = (
     Link(
@@ -48,7 +49,7 @@ def get():
 
 @rt("/add_event")
 def get():
-    return H2(cls="text-xl")("Add New Event"), Div(EventForm())
+    return H2(cls="text-xl")("Add New Event"), Div(EventForm("/add_event", "Add Event"))
 
 
 @rt("/add_event")
@@ -87,7 +88,7 @@ def get(event_id: int):
     return Titled(
         f"Edit Event: {event.title}",
         Container(
-            EventForm(event),
+            fill_form(EventForm(f"/edit_event/{event_id}", "Edit Event"), event),
             event,
         ),
     )
