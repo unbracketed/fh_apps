@@ -116,14 +116,3 @@ def layout(*dec_args, **dec_kwargs):
         return _wrapper
 
     return decorator
-
-
-def ControlPanel(*args, **kwargs):
-    return Div(_id="control-panel", cols=2)(
-        HoverBtnPrimary(
-            "Add Event",
-            href="/add_event",
-            hx_target="#control-panel",
-            hx_get="/add_event",
-        )
-    )

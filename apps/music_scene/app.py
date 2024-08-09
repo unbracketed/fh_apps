@@ -2,13 +2,12 @@ from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
-from apps.music_scene.components.elements import SlimBtn
 from apps.music_scene.components.events import (
     EventDetails,
     CompactEventList,
     EventsActions,
 )
-from apps.music_scene.components.layout import Container, layout, Grid, ControlPanel
+from apps.music_scene.components.layout import layout
 from apps.music_scene.models import Event, events
 from components.forms import EventForm
 
@@ -52,18 +51,10 @@ def get():
 
     return (
         EventsActions(view_mode="compact"),
-        Grid(cols=4)(
-            Div(id="event-list", cls="col-span-3")(
-                *CompactEventList(upcoming_events),
-            ),
-            ControlPanel(),
+        Div(id="event-list", cls="col-span-3")(
+            *CompactEventList(upcoming_events),
         ),
     )
-
-
-@rt("/control-panel")
-def get():
-    return ControlPanel()
 
 
 @rt("/full-view")
@@ -82,15 +73,15 @@ def get():
     )
 
 
-@rt("/add_event")
+@rt("/add-event")
 def get():
     return (
         H2(cls="text-xl")("Add New Event"),
-        Div(EventForm("/add_event", "Add Event")),
+        Div(EventForm("/add-event", "Add Event")),
     )
 
 
-@rt("/add_event")
+@rt("/add-event")
 def post(
     title: str,
     artist: str,
@@ -110,7 +101,7 @@ def post(
         description=description,
     )
     events.insert(new_event)
-    return RedirectResponse(url="/", status_code=303)
+    return Div(*CompactEventList(events(order_by="date")))
 
 
 @rt("/event/{event_id}")
