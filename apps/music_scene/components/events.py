@@ -130,6 +130,7 @@ def CompactEventList(events, **kwargs):
                         cls="underline hover:bg-red-500 px-1",
                         hx_post=f"/event/delete/{event.id}",
                         hx_target="#event-list",
+                        hx_confirm=f"Delete {event.name}?"
                     )("Del"),
                 ),
             ),
