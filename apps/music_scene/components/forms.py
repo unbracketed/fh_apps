@@ -4,38 +4,40 @@ from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
 
 
 def EventForm(action, submit_label="Submit", event_id=None):
-    return Div(cls="py-4 px-2 bg-orange-200")(Form(
-        action=action,
-        method="post",
-        cls="space-y-4",
-        hx_post=action,
-        hx_target=f"#event-list",
-        id=f"event-form-{event_id}",
-    )(
-        Grid(cols=2)(
-            LabeledInput("Event Title", "title", required=True),
-            LabeledInput(
-                "Artist",
-                "artist",
-                placeholder="Artist, band name, or  name of performing act",
+    return Div(cls="py-4 px-2 bg-orange-200")(
+        Form(
+            action=action,
+            method="post",
+            cls="space-y-4",
+            hx_post=action,
+            hx_target=f"#event-list",
+            id=f"event-form-{event_id}",
+        )(
+            Grid(cols=2)(
+                LabeledInput("Event Title", "title", required=True),
+                LabeledInput(
+                    "Artist",
+                    "artist",
+                    placeholder="Artist, band name, or  name of performing act",
+                ),
+                LabeledInput("Date", "date", _type="date", required=True),
+                LabeledInput("Start Time", "start_time", _type="time"),
+                LabeledInput(
+                    "Venue", "venue", placeholder="Venue name or location of event"
+                ),
+                LabeledInput("URL", "url"),
+                LabeledTextarea("Event Description", "description"),
             ),
-            LabeledInput("Date", "date", _type="date", required=True),
-            LabeledInput("Start Time", "start_time", _type="time"),
-            LabeledInput(
-                "Venue", "venue", placeholder="Venue name or location of event"
+            SubmitBtn(submit_label),
+            Button(
+                "Cancel",
+                cls="btn btn-secondary cancel-btn",
             ),
-            LabeledInput("URL", "url"),
-            LabeledTextarea("Event Description", "description")
-        ),
-        SubmitBtn(submit_label),
-        Button(
-            "Cancel",
-            cls="btn btn-secondary cancel-btn",
-        ),
-        Script(f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )""")
-    ))
-
-
+            Script(
+                f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )"""
+            ),
+        )
+    )
 
 
 def LabeledInput(label, _id, _type="text", placeholder="", required=False):

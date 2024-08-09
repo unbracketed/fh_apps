@@ -76,23 +76,29 @@ def CompactEventList(events, **kwargs):
                 Div(event.date),
                 Div(f"{event.start_time}" if event.start_time else "-"),
                 Div(
-                A( id=f"edit-btn-{event.id}",
+                    A(
+                        id=f"edit-btn-{event.id}",
                         href=f"/edit_event/{event.id}",
                         cls="underline hover:bg-rose-200 inline-block px-1",
                         hx_get=f"/edit_event/{event.id}",
                         hx_target=f"#event-edit-form-{event.id}",
-                        hx_swap="innerHTML"
+                        hx_swap="innerHTML",
                     )("Edit"),
-                    A(href=f"/event/{event.id}", cls="underline hover:bg-blue-200 inline-block px-1")("View"),
+                    A(
+                        href=f"/event/{event.id}",
+                        cls="underline hover:bg-blue-200 inline-block px-1",
+                    )("View"),
                 ),
             ),
             Div(id=f"event-edit-form-{event.id}", cls="hidden"),
-            Script(f"""
+            Script(
+                f"""
                 me('#edit-btn-{event.id}').on('click', ev => {{
                     me('#event-row-{event.id}').classToggle('hidden');
                     me('#event-edit-form-{event.id}').classToggle('hidden');
                 }})
-            """)
+            """
+            ),
         )
         for event in events
     ]

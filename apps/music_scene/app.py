@@ -130,10 +130,8 @@ def get(event_id: int):
 @rt("/edit_event/{event_id}")
 def get(event_id: int):
     event = events[event_id]
-    form = EventForm(f"/edit_event/{event_id}","Save", event_id)
-    return Div(cls="col-span-4")(
-        fill_form(form, event)
-    )
+    form = EventForm(f"/edit_event/{event_id}", "Save", event_id)
+    return Div(cls="col-span-4")(fill_form(form, event))
 
 
 @rt("/edit_event/{event_id}")
