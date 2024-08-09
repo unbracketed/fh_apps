@@ -1,4 +1,4 @@
-from fastcore.basics import patch
+from fasthtml.common import patch
 from fastlite import database
 
 
@@ -25,7 +25,7 @@ Event = events.dataclass()
 
 
 @patch(as_prop=True)
-def name(self:Event) -> str:
+def name(self: Event) -> str:
     return self.title if not self.artist else f"{self.title}: {self.artist}"
 
 
