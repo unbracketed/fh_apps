@@ -26,6 +26,7 @@ exception_handlers = {
     418: lambda req, exc: Titled("418: I'm a teapot!"),
 }
 
+
 app, rt = fast_app(
     hdrs=head_section,
     pico=False,
@@ -72,7 +73,7 @@ def get():
 @rt("/compact-view")
 def get():
     return Div(
-        A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls=)("Full View"),
+        A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls="underline")("Full View"),
         *CompactEventList(events(order_by="date"), cls="mt-4"),
     )
 
