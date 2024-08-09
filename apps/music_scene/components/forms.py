@@ -1,29 +1,48 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
-from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
+from apps.music_scene.components.elements import SubmitBtn
+from apps.music_scene.models import venues, events
 
 
-def EventForm(action, submit_label="Submit", event_id=None):
-    return Div(cls="py-4 px-2 bg-orange-200")(
+def EventForm(action, form_heading="", submit_label="Save", event_id=None):
+    all_venues = venues(order_by="name")
+    selected_venue_id = None
+    if event_id:
+        event = events[event_id]
+        if event.venue:
+            selected_venue_id = venues.lookup({"name": event.venue})
+    return Div(
+        id=f"event-form-{event_id}",
+        cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600",
+    )(
+        H2(form_heading, cls="text-2xl mb-4") if form_heading else "",
         Form(
             action=action,
             method="post",
             cls="space-y-4",
             hx_post=action,
             hx_target=f"#event-list",
-            id=f"event-form-{event_id}",
         )(
             Grid(cols=2)(
                 LabeledInput("Event Title", "title", required=True),
                 LabeledInput(
                     "Artist",
                     "artist",
-                    placeholder="Artist, band name, or  name of performing act",
+                    placeholder="Artist, band name, or name of performing act",
                 ),
                 LabeledInput("Date", "date", _type="date", required=True),
                 LabeledInput("Start Time", "start_time", _type="time"),
-                LabeledInput(
-                    "Venue", "venue", placeholder="Venue name or location of event"
+                LabeledSelect(
+                    "Venue",
+                    "venue_id",
+                    options=[
+                        Option(
+                            venue.name,
+                            value=str(venue.id),
+                            selected=(venue.id == selected_venue_id),
+                        )
+                        for venue in all_venues
+                    ],
                 ),
                 LabeledInput("URL", "url"),
                 LabeledTextarea("Event Description", "description"),
@@ -36,7 +55,7 @@ def EventForm(action, submit_label="Submit", event_id=None):
             Script(
                 f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )"""
             ),
-        )
+        ),
     )
 
 
@@ -54,16 +73,11 @@ def LabeledInput(label, _id, _type="text", placeholder="", required=False):
 
 
 def LabeledSelect(label, _id, options=[]):
-    options = (
-        Option("Corporate event"),
-        Option("Wedding"),
-        Option("Birthday"),
-        Option("Other"),
-    )
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
         Select(
             id=_id,
+            name=_id,
             cls="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
         )(*options),
     )
