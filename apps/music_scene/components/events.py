@@ -88,23 +88,23 @@ def CompactEventList(events, **kwargs):
     css_classes = " ".join(["border-b-2", "mt-4", "py-1", kwargs.pop("cls", "")])
 
     return [
-        Grid(cols=8, cls=css_classes)(
-            Div(cls="col-span-3 font-bold")("Event Name / Artist"),
-            Div(cls="col-span-2 font-bold")("Venue"),
+        Grid(cols=12, cls=css_classes)(
+            Div(cls="col-span-4 font-bold")("Event Name / Artist"),
+            Div(cls="col-span-4 font-bold")("Venue"),
             Div(cls="font-bold")("Date"),
             Div(cls="font-bold")("Time"),
-            Div(cls="invisible")(""),
+            Div(cls="col-span-2 invisible")(""),
         )
     ] + [
         Div(
-            Grid(cols=8, cls=css_classes, id=f"event-row-{event.id}")(
-                Div(cls="col-span-3")(
+            Grid(cols=12, cls=css_classes, id=f"event-row-{event.id}")(
+                Div(cls="col-span-4")(
                     f"{event.title}: {event.artist}" if event.artist else event.title
                 ),
-                Div(cls="col-span-2")(f"{event.venue}" if event.venue else ""),
+                Div(cls="col-span-4")(f"{event.venue}" if event.venue else ""),
                 Div(_ds_short(event.date)),
                 Div(f"{_ts_full(event.start_time)}" if event.start_time else "-"),
-                Div(
+                Div(cls="col-span-2")(
                     A(
                         id=f"edit-btn-{event.id}",
                         href=f"/edit_event/{event.id}",
@@ -125,6 +125,12 @@ def CompactEventList(events, **kwargs):
                         hx_target=f"#event-edit-form-{event.id}",
                         hx_swap="innerHTML",
                     )("Copy"),
+                    A(
+                        href=f"/event/delete/{event.id}",
+                        cls="underline hover:bg-red-500 px-1",
+                        hx_post=f"/event/delete/{event.id}",
+                        hx_target="#event-list",
+                    )("Del"),
                 ),
             ),
             Div(id=f"event-edit-form-{event.id}", cls="hidden"),

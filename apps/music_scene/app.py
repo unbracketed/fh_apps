@@ -153,4 +153,10 @@ def get(event_id: int):
     return Div(fill_form(form, src_event))
 
 
+@rt("/event/delete/{event_id}")
+def post(event_id: int):
+    events.delete(event_id)
+    return Div(*CompactEventList(events(order_by="date")))
+
+
 serve(port=5045)
