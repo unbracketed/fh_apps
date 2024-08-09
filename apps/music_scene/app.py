@@ -10,6 +10,8 @@ from apps.music_scene.components.events import (
 from apps.music_scene.components.layout import layout
 from apps.music_scene.models import Event, events
 from components.forms import EventForm
+from apps.music_scene.models import Event, events, Venue, venues
+from apps.music_scene.components.venues import VenueList, VenueForm
 
 head_section = (
     Link(rel="preconnect", href="https://fonts.googleapis.com"),
@@ -157,6 +159,81 @@ def get(event_id: int):
 def post(event_id: int):
     events.delete(event_id)
     return Div(*CompactEventList(events(order_by="date")))
+
+
+# --------
+# Venues
+# -------
+@rt("/venues")
+@layout(title="Venues")
+def get():
+    all_venues = venues(order_by="name")
+    return (
+        Div(id="venue-list")(
+            VenueList(all_venues),
+        ),
+        Div(id="venue-form")(
+            VenueForm("/venues/add", "Add Venue"),
+        ),
+    )
+
+@rt("/venues/add")
+def post(
+    name: str,
+    address: str,
+    city: str,
+    state: str,
+    zip_code: str,
+    website: str,
+    description: str,
+):
+    new_venue = dict(
+        name=name,
+        address=address,
+        city=city,
+        state=state,
+        zip_code=zip_code,
+        website=website,
+        description=description,
+    )
+    venues.insert(new_venue)
+    return VenueList(venues(order_by="name"))
+
+@rt("/venues/edit/{venue_id}")
+def get(venue_id: int):
+    venue = venues[venue_id]
+    form = VenueForm(f"/venues/edit/{venue_id}", "Save", venue_id)
+    return Div(cls="col-span-4")(fill_form(form, venue))
+
+@rt("/venues/edit/{venue_id}")
+def post(
+    venue_id: int,
+    name: str,
+    address: str,
+    city: str,
+    state: str,
+    zip_code: str,
+    website: str,
+    description: str,
+):
+    updated_venue = Venue(
+        id=venue_id,
+        name=name,
+        address=address,
+        city=city,
+        state=state,
+        zip_code=zip_code,
+        website=website,
+        description=description,
+    )
+    venues.update(updated_venue)
+    return VenueList(venues(order_by="name"))
+
+@rt("/venues/delete/{venue_id}")
+def post(venue_id: int):
+    venues.delete(venue_id)
+    return VenueList(venues(order_by="name"))
+
 
 
 serve(port=5045)

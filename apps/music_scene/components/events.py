@@ -160,4 +160,5 @@ def EventsActions(*args, view_mode="full", **kwargs):
     add_event = SlimBtn(
         "Add Event", "/add-event", cls="bg-orange-500 hover:bg-orange-600"
     )
-    return Div(btn, add_event, *args, id="events-actions", **kwargs)
+    venues_btn = SlimBtn("Venues", "/venues", cls="bg-green-500 hover:bg-green-600")
+    return Div(btn, add_event, venues_btn, *args, id="events-actions", **kwargs)

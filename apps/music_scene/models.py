@@ -22,4 +22,22 @@ if events not in db.t:
 
 Event = events.dataclass()
 
-__all__ = ["events", "Event"]
+venues_schema = dict(
+    id=int,
+    name=str,
+    address=str,
+    city=str,
+    state=str,
+    zip_code=str,
+    website=str,
+    description=str,
+    pk="id",
+)
+
+venues = db.t.venues
+if venues not in db.t:
+    venues.create(**venues_schema)
+
+Venue = venues.dataclass()
+
+__all__ = ["events", "Event", "venues", "Venue"]

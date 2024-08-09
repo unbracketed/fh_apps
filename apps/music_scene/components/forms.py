@@ -1,9 +1,10 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
-from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
-
+from apps.music_scene.components.elements import SubmitBtn
+from apps.music_scene.models import venues
 
 def EventForm(action, submit_label="Submit", event_id=None):
+    all_venues = venues(order_by="name")
     return Div(cls="py-4 px-2 bg-orange-200")(
         Form(
             action=action,
@@ -18,12 +19,14 @@ def EventForm(action, submit_label="Submit", event_id=None):
                 LabeledInput(
                     "Artist",
                     "artist",
-                    placeholder="Artist, band name, or  name of performing act",
+                    placeholder="Artist, band name, or name of performing act",
                 ),
                 LabeledInput("Date", "date", _type="date", required=True),
                 LabeledInput("Start Time", "start_time", _type="time"),
-                LabeledInput(
-                    "Venue", "venue", placeholder="Venue name or location of event"
+                LabeledSelect(
+                    "Venue",
+                    "venue_id",
+                    options=[Option(venue.name, value=str(venue.id)) for venue in all_venues],
                 ),
                 LabeledInput("URL", "url"),
                 LabeledTextarea("Event Description", "description"),
@@ -39,7 +42,6 @@ def EventForm(action, submit_label="Submit", event_id=None):
         )
     )
 
-
 def LabeledInput(label, _id, _type="text", placeholder="", required=False):
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
@@ -52,18 +54,12 @@ def LabeledInput(label, _id, _type="text", placeholder="", required=False):
         ),
     )
 
-
 def LabeledSelect(label, _id, options=[]):
-    options = (
-        Option("Corporate event"),
-        Option("Wedding"),
-        Option("Birthday"),
-        Option("Other"),
-    )
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
         Select(
             id=_id,
+            name=_id,
             cls="block w-full mt-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
         )(*options),
     )
