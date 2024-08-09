@@ -146,4 +146,11 @@ def post(
     return Div(*CompactEventList(events(order_by="date")))
 
 
+@rt("/event/copy/{event_id}")
+def get(event_id: int):
+    src_event = events[event_id]
+    form = EventForm("/add-event", "Save", event_id)
+    return Div(fill_form(form, src_event))
+
+
 serve(port=5045)

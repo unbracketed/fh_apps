@@ -108,15 +108,23 @@ def CompactEventList(events, **kwargs):
                     A(
                         id=f"edit-btn-{event.id}",
                         href=f"/edit_event/{event.id}",
-                        cls="underline hover:bg-rose-200 inline-block px-1",
+                        cls="underline hover:bg-rose-200 px-1",
                         hx_get=f"/edit_event/{event.id}",
                         hx_target=f"#event-edit-form-{event.id}",
                         hx_swap="innerHTML",
                     )("Edit"),
                     A(
                         href=f"/event/{event.id}",
-                        cls="underline hover:bg-blue-200 inline-block px-1",
+                        cls="underline hover:bg-blue-200 px-1",
                     )("View"),
+                    A(
+                        id=f"copy-btn-{event.id}",
+                        href=f"/event/copy/{event.id}",
+                        cls="underline hover:bg-red-300 px-1",
+                        hx_get=f"/event/copy/{event.id}",
+                        hx_target=f"#event-edit-form-{event.id}",
+                        hx_swap="innerHTML",
+                    )("Copy"),
                 ),
             ),
             Div(id=f"event-edit-form-{event.id}", cls="hidden"),
@@ -125,7 +133,10 @@ def CompactEventList(events, **kwargs):
                 me('#edit-btn-{event.id}').on('click', ev => {{
                     me('#event-row-{event.id}').classToggle('hidden');
                     me('#event-edit-form-{event.id}').classToggle('hidden');
-                }})
+                }});
+                me('#copy-btn-{event.id}').on('click', ev => {{
+                    me('#event-edit-form-{event.id}').classToggle('hidden');
+                }});
             """
             ),
         )
