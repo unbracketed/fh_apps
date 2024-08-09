@@ -47,10 +47,10 @@ def get():
     return (
         Grid(cols=4)(
             Div(id="event-list", cls="col-span-3")(
-                A(href="/full-view", hx_get="/full-view", hx_target="#event-list")(
+                A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls="underline")(
                     "Full View"
                 ),
-                *CompactEventList(upcoming_events),
+                *CompactEventList(upcoming_events, cls="mt-4"),
             ),
             ControlPanel(),
         ),
@@ -64,16 +64,16 @@ def get():
 
 @rt("/full-view")
 def get():
-    return A(href="/compact-view", hx_get="/compact-view", hx_target="#event-list")(
+    return A(href="/compact-view", hx_get="/compact-view", hx_target="#event-list", cls="underline")(
         "Compact View"
-    ), Div(*events(order_by="date"))
+    ), Div(cls="mt-4")(*events(order_by="date"))
 
 
 @rt("/compact-view")
 def get():
     return Div(
-        A(href="/full-view", hx_get="/full-view", hx_target="#event-list")("Full View"),
-        *CompactEventList(events(order_by="date")),
+        A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls=)("Full View"),
+        *CompactEventList(events(order_by="date"), cls="mt-4"),
     )
 
 
