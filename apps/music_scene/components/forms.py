@@ -5,14 +5,15 @@ from apps.music_scene.models import venues
 
 def EventForm(action, submit_label="Submit", event_id=None):
     all_venues = venues(order_by="name")
-    return Div(cls="py-4 px-2 bg-orange-200")(
+    return Div(id=f"event-form-{event_id}", cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600")(
+        H2("Edit Event", cls="text-2xl mb-4"),
         Form(
             action=action,
             method="post",
             cls="space-y-4",
             hx_post=action,
             hx_target=f"#event-list",
-            id=f"event-form-{event_id}",
+
         )(
             Grid(cols=2)(
                 LabeledInput("Event Title", "title", required=True),
