@@ -2,7 +2,12 @@ from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
 from starlette.responses import RedirectResponse, FileResponse
 
-from apps.music_scene.components.events import EventDetails, CompactEventList
+from apps.music_scene.components.elements import SlimBtn
+from apps.music_scene.components.events import (
+    EventDetails,
+    CompactEventList,
+    EventsActions,
+)
 from apps.music_scene.components.layout import Container, layout, Grid, ControlPanel
 from apps.music_scene.models import Event, events
 from components.forms import EventForm
@@ -46,14 +51,9 @@ def get():
     upcoming_events = events(order_by="date")
 
     return (
+        EventsActions(view_mode="compact"),
         Grid(cols=4)(
             Div(id="event-list", cls="col-span-3")(
-                A(
-                    href="/full-view",
-                    hx_get="/full-view",
-                    hx_target="#event-list",
-                    cls="underline",
-                )("Full View"),
                 *CompactEventList(upcoming_events),
             ),
             ControlPanel(),
@@ -68,30 +68,26 @@ def get():
 
 @rt("/full-view")
 def get():
-    return A(
-        href="/compact-view",
-        hx_get="/compact-view",
-        hx_target="#event-list",
-        cls="underline",
-    )("Compact View"), Div(cls="mt-4")(*events(order_by="date"))
+    return (
+        EventsActions(view_mode="full", hx_swap_oob="#events-actions"),
+        Div(cls="mt-4")(*events(order_by="date")),
+    )
 
 
 @rt("/compact-view")
 def get():
-    return Div(
-        A(
-            href="/full-view",
-            hx_get="/full-view",
-            hx_target="#event-list",
-            cls="underline",
-        )("Full View"),
-        *CompactEventList(events(order_by="date")),
+    return (
+        EventsActions(view_mode="compact", hx_swap_oob="#events-actions"),
+        Div(cls="mt-4")(*CompactEventList(events(order_by="date"))),
     )
 
 
 @rt("/add_event")
 def get():
-    return H2(cls="text-xl")("Add New Event"), Div(EventForm("/add_event", "Add Event"))
+    return (
+        H2(cls="text-xl")("Add New Event"),
+        Div(EventForm("/add_event", "Add Event")),
+    )
 
 
 @rt("/add_event")

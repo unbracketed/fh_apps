@@ -989,6 +989,11 @@ select {
   background-color: rgb(254 215 170 / var(--tw-bg-opacity));
 }
 
+.bg-lime-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(101 163 13 / var(--tw-bg-opacity));
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -1113,6 +1118,11 @@ select {
 .hover\:bg-rose-200:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(254 205 211 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-lime-700:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(77 124 15 / var(--tw-bg-opacity));
 }
 
 .hover\:underline:hover {

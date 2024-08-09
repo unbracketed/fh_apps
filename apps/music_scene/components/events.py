@@ -2,6 +2,7 @@ from datetime import datetime
 from fastcore.basics import patch
 from fasthtml.common import Card, P, Div, H2, A, H1, Script
 
+from apps.music_scene.components.elements import SlimBtn
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
 
@@ -133,3 +134,11 @@ def CompactEventList(events, **kwargs):
         )
         for event in events
     ]
+
+
+def EventsActions(*args, view_mode="full", **kwargs):
+    if view_mode == "full":
+        btn = SlimBtn("Compact View", "/compact-view")
+    else:
+        btn = SlimBtn("Full View", "/full-view")
+    return Div(btn, *args, id="events-actions", **kwargs)

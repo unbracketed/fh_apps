@@ -24,3 +24,12 @@ def HoverBtnPrimary(label: str, **kwargs):
 
 def SubmitBtn(label: str, **kwargs):
     return Button(label, cls=_class_str(hover_btn_classes), type="submit", **kwargs)
+
+
+def SlimBtn(label: str, action, **kwargs):
+    return A(
+        href=action,
+        hx_get=action,
+        hx_target="#event-list",
+        cls="text-white bg-lime-600 px-2 hover:bg-lime-700 rounded",
+    )(label)
