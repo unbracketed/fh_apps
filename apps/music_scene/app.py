@@ -54,7 +54,7 @@ def get():
                     hx_target="#event-list",
                     cls="underline",
                 )("Full View"),
-                *CompactEventList(upcoming_events, cls="mt-4"),
+                *CompactEventList(upcoming_events),
             ),
             ControlPanel(),
         ),
@@ -85,7 +85,7 @@ def get():
             hx_target="#event-list",
             cls="underline",
         )("Full View"),
-        *CompactEventList(events(order_by="date"), cls="mt-4"),
+        *CompactEventList(events(order_by="date")),
     )
 
 

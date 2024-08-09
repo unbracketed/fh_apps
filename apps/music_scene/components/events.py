@@ -6,9 +6,29 @@ from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
 
 
-def format_date(date_str):
+def _ds_full(date_str):
+    """Convert a date string like '2024-03-14' to string like 'Thursday, March 14, 2024'"""
     date_obj = datetime.strptime(date_str, "%Y-%m-%d")
     return date_obj.strftime("%A, %B %d, %Y")
+
+
+def _ds_short(date_str):
+    """Convert a date string like '2024-03-14' to string like 'March 14'"""
+    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+    return date_obj.strftime("%B %d")
+
+
+def _ts_full(time_str):
+    """Convert a time string like '20:00' or '20:15'
+    to a friendly local time like '8PM' or '8:15PM'."""
+    time_obj = datetime.strptime(time_str, "%H:%M")
+
+    if time_obj.minute != 0:
+        # If minute is non-zero, include it in the format.
+        return time_obj.strftime("%I:%M %p").lstrip("0")
+    else:
+        # If minute is zero, only include hour in the format.
+        return time_obj.strftime("%I %p").lstrip("0")
 
 
 @patch
@@ -16,7 +36,7 @@ def __ft__(self: Event):
     return Card(
         H2(self.title, cls="text-xl font-semibold"),
         P(f"Artist: {self.artist}", cls="text-gray-600") if self.artist else "",
-        P(f"Date: {format_date(self.date)}", cls="text-sm"),
+        P(f"Date: {_ds_full(self.date)}", cls="text-sm"),
         P(f"Venue: {self.venue}", cls="text-sm") if self.venue else "",
         Div(cls="mt-2")(
             A(
@@ -38,7 +58,7 @@ def EventDetails(event: Event):
     return Div(
         H1(event.title, cls="text-3xl font-bold mb-6"),
         P(f"Artist: {event.artist}", cls="text-xl mb-2") if event.artist else "",
-        P(f"Date: {format_date(event.date)}", cls="mb-2"),
+        P(f"Date: {_ds_full(event.date)}", cls="mb-2"),
         P(f"Start Time: {event.start_time}", cls="text-xl font-semibold")
         if event.start_time
         else "",
@@ -67,14 +87,17 @@ def EventDetails(event: Event):
 
 
 def CompactEventList(events, **kwargs):
-    css_classes = " ".join(["border-b-2", "py-1", kwargs.pop("cls", "")])
+    css_classes = " ".join(["border-b-2", "mt-4", "py-1", kwargs.pop("cls", "")])
 
     return [
         Div(
-            Grid(cols=4, cls=css_classes, id=f"event-row-{event.id}")(
-                Div(f"{event.title}: {event.artist}" if event.artist else event.title),
-                Div(event.date),
-                Div(f"{event.start_time}" if event.start_time else "-"),
+            Grid(cols=8, cls=css_classes, id=f"event-row-{event.id}")(
+                Div(cls="col-span-3")(
+                    f"{event.title}: {event.artist}" if event.artist else event.title
+                ),
+                Div(cls="col-span-2")(f"{event.venue}" if event.venue else ""),
+                Div(_ds_short(event.date)),
+                Div(f"{_ts_full(event.start_time)}" if event.start_time else "-"),
                 Div(
                     A(
                         id=f"edit-btn-{event.id}",
