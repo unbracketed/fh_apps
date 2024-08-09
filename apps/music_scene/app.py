@@ -77,10 +77,7 @@ def get():
 
 @rt("/add-event")
 def get():
-    return (
-        H2(cls="text-xl")("Add New Event"),
-        Div(EventForm("/add-event", "Add Event")),
-    )
+    return (Div(EventForm("/add-event", "Add Event")),)
 
 
 @rt("/add-event")
@@ -114,17 +111,16 @@ def get(event_id: int):
     return Titled(f"Event: {event.title}", Div(EventDetails(event)))
 
 
-# In app.py
-
-
-@rt("/edit_event/{event_id}")
+@rt("/edit-event/{event_id}")
 def get(event_id: int):
     event = events[event_id]
-    form = EventForm(f"/edit_event/{event_id}", "Save", event_id)
+    venue_id = venues.lookup({"name": event.venue})
+    setattr(event, "venue_id", venue_id)
+    form = EventForm(f"/edit-event/{event_id}", "Edit Event", event_id=event_id)
     return Div(cls="col-span-4")(fill_form(form, event))
 
 
-@rt("/edit_event/{event_id}")
+@rt("/edit-event/{event_id}")
 def post(
     event_id: int,
     title: str,
@@ -153,7 +149,7 @@ def post(
 @rt("/event/copy/{event_id}")
 def get(event_id: int):
     src_event = events[event_id]
-    form = EventForm("/add-event", "Save", event_id)
+    form = EventForm("/add-event", f"Copy of {src_event.title}", event_id=event_id)
     return Div(fill_form(form, src_event))
 
 

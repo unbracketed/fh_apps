@@ -1,16 +1,21 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn
-from apps.music_scene.models import venues
+from apps.music_scene.models import venues, events
 
 
-def EventForm(action, submit_label="Submit", event_id=None):
+def EventForm(action, form_heading="", submit_label="Save", event_id=None):
     all_venues = venues(order_by="name")
+    selected_venue_id = None
+    if event_id:
+        event = events[event_id]
+        if event.venue:
+            selected_venue_id = venues.lookup({"name": event.venue})
     return Div(
         id=f"event-form-{event_id}",
         cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600",
     )(
-        H2("Edit Event", cls="text-2xl mb-4"),
+        H2(form_heading, cls="text-2xl mb-4") if form_heading else "",
         Form(
             action=action,
             method="post",
@@ -31,7 +36,12 @@ def EventForm(action, submit_label="Submit", event_id=None):
                     "Venue",
                     "venue_id",
                     options=[
-                        Option(venue.name, value=str(venue.id)) for venue in all_venues
+                        Option(
+                            venue.name,
+                            value=str(venue.id),
+                            selected=(venue.id == selected_venue_id),
+                        )
+                        for venue in all_venues
                     ],
                 ),
                 LabeledInput("URL", "url"),

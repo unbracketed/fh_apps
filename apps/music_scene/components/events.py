@@ -45,7 +45,7 @@ def __ft__(self: Event):
                 cls="btn btn-primary text-blue-500 hover:underline mr-4",
             )("View Details"),
             A(
-                href=f"/edit_event/{self.id}",
+                href=f"/edit-event/{self.id}",
                 cls="btn btn-secondary text-green-500 hover:underline",
             )(
                 "Edit",
@@ -76,7 +76,7 @@ def EventDetails(event: Event):
             ),
             A(
                 "Edit Event",
-                href=f"/edit_event/{event.id}",
+                href=f"/edit-event/{event.id}",
                 cls="ml-4 bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600",
             ),
             cls="mt-6",
@@ -107,9 +107,9 @@ def CompactEventList(events, **kwargs):
                 Div(cls="col-span-2")(
                     A(
                         id=f"edit-btn-{event.id}",
-                        href=f"/edit_event/{event.id}",
+                        href=f"/edit-event/{event.id}",
                         cls="underline hover:bg-rose-200 px-1",
-                        hx_get=f"/edit_event/{event.id}",
+                        hx_get=f"/edit-event/{event.id}",
                         hx_target=f"#event-edit-form-{event.id}",
                         hx_swap="innerHTML",
                     )("Edit"),
