@@ -1,6 +1,6 @@
 from fasthtml import fill_form
-from fasthtml.common import Div, Titled, Link, A, H2, fast_app, serve
-from starlette.responses import RedirectResponse, FileResponse
+from fasthtml.common import Div, Titled, Link, fast_app, serve
+from starlette.responses import FileResponse
 
 from apps.music_scene.components.events import (
     EventDetails,
@@ -8,7 +8,6 @@ from apps.music_scene.components.events import (
     EventsActions,
 )
 from apps.music_scene.components.layout import layout
-from apps.music_scene.models import Event, events
 from components.forms import EventForm
 from apps.music_scene.models import Event, events, Venue, venues
 from apps.music_scene.components.venues import VenueList, VenueForm

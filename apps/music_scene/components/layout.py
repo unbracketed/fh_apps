@@ -77,9 +77,6 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
     :param kwargs: Additional HTML attributes - use "cls" for additional classes
     """
 
-    # if isinstance(cols, dict):
-    #     col_classes = " ".join([f"{bp}:grid-cols-{n}" for bp, n in cols.items()])
-    # else:
     col_classes = f"grid-cols-{cols}"
 
     if responsive and isinstance(cols, int):
@@ -97,7 +94,6 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
 
 def Layout(*args, **kwargs):
     """Layout for the blog, but can be adapted to anything"""
-    # return Title(title), blog_header(), Main(*args, **kwargs), blog_footer()
     title = kwargs.get("title", "Music Scene Calendar")
     return Title(title), Container(H1(cls="text-3xl py-4")(title), *args, **kwargs)
 

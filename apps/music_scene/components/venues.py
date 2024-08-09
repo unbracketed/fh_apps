@@ -1,7 +1,6 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
-from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
-from apps.music_scene.models import Venue
+from apps.music_scene.components.elements import SubmitBtn
 
 
 def VenueList(venues):
