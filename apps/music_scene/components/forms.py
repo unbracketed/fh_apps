@@ -3,9 +3,13 @@ from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn
 from apps.music_scene.models import venues
 
+
 def EventForm(action, submit_label="Submit", event_id=None):
     all_venues = venues(order_by="name")
-    return Div(id=f"event-form-{event_id}", cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600")(
+    return Div(
+        id=f"event-form-{event_id}",
+        cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600",
+    )(
         H2("Edit Event", cls="text-2xl mb-4"),
         Form(
             action=action,
@@ -13,7 +17,6 @@ def EventForm(action, submit_label="Submit", event_id=None):
             cls="space-y-4",
             hx_post=action,
             hx_target=f"#event-list",
-
         )(
             Grid(cols=2)(
                 LabeledInput("Event Title", "title", required=True),
@@ -27,7 +30,9 @@ def EventForm(action, submit_label="Submit", event_id=None):
                 LabeledSelect(
                     "Venue",
                     "venue_id",
-                    options=[Option(venue.name, value=str(venue.id)) for venue in all_venues],
+                    options=[
+                        Option(venue.name, value=str(venue.id)) for venue in all_venues
+                    ],
                 ),
                 LabeledInput("URL", "url"),
                 LabeledTextarea("Event Description", "description"),
@@ -40,8 +45,9 @@ def EventForm(action, submit_label="Submit", event_id=None):
             Script(
                 f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )"""
             ),
-        )
+        ),
     )
+
 
 def LabeledInput(label, _id, _type="text", placeholder="", required=False):
     return Label(cls="block")(
@@ -54,6 +60,7 @@ def LabeledInput(label, _id, _type="text", placeholder="", required=False):
             cls="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
         ),
     )
+
 
 def LabeledSelect(label, _id, options=[]):
     return Label(cls="block")(

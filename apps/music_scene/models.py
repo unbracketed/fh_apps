@@ -37,7 +37,9 @@ venues_schema = dict(
 venues = db.t.venues
 if venues not in db.t:
     venues.create(**venues_schema)
-
+    all_venues = set([event.venue for event in events()])
+    for venue in all_venues:
+        venues.insert({"name": venue})
 Venue = venues.dataclass()
 
 __all__ = ["events", "Event", "venues", "Venue"]

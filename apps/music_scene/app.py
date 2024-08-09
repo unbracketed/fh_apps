@@ -90,9 +90,10 @@ def post(
     date: str,
     start_time: str,
     url: str,
-    venue: str,
+    venue_id: str,
     description: str,
 ):
+    venue = venues[venue_id].name
     new_event = dict(
         title=title,
         artist=artist,
@@ -131,9 +132,10 @@ def post(
     date: str,
     start_time: str,
     url: str,
-    venue: str,
+    venue_id: str,
     description: str,
 ):
+    venue = venues[venue_id].name
     updated_event = Event(
         id=event_id,
         title=title,
@@ -177,6 +179,7 @@ def get():
         ),
     )
 
+
 @rt("/venues/add")
 def post(
     name: str,
@@ -199,11 +202,13 @@ def post(
     venues.insert(new_venue)
     return VenueList(venues(order_by="name"))
 
+
 @rt("/venues/edit/{venue_id}")
 def get(venue_id: int):
     venue = venues[venue_id]
     form = VenueForm(f"/venues/edit/{venue_id}", "Save", venue_id)
     return Div(cls="col-span-4")(fill_form(form, venue))
+
 
 @rt("/venues/edit/{venue_id}")
 def post(
@@ -229,11 +234,11 @@ def post(
     venues.update(updated_venue)
     return VenueList(venues(order_by="name"))
 
+
 @rt("/venues/delete/{venue_id}")
 def post(venue_id: int):
     venues.delete(venue_id)
     return VenueList(venues(order_by="name"))
-
 
 
 serve(port=5045)

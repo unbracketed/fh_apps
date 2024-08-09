@@ -3,6 +3,7 @@ from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
 from apps.music_scene.models import Venue
 
+
 def VenueList(venues):
     return Div(
         H2("Venues", cls="text-2xl font-bold mb-4"),
@@ -15,11 +16,10 @@ def VenueList(venues):
                     Th("Actions", cls="text-left"),
                 )
             ),
-            Tbody(
-                *[VenueRow(venue) for venue in venues]
-            )
-        )
+            Tbody(*[VenueRow(venue) for venue in venues]),
+        ),
     )
+
 
 def VenueRow(venue):
     return Tr(
@@ -32,7 +32,7 @@ def VenueRow(venue):
                 href=f"/venues/edit/{venue.id}",
                 hx_get=f"/venues/edit/{venue.id}",
                 hx_target="#venue-form",
-                cls="text-blue-500 hover:underline mr-2"
+                cls="text-blue-500 hover:underline mr-2",
             ),
             A(
                 "Delete",
@@ -40,10 +40,11 @@ def VenueRow(venue):
                 hx_post=f"/venues/delete/{venue.id}",
                 hx_target="#venue-list",
                 hx_confirm="Are you sure you want to delete this venue?",
-                cls="text-red-500 hover:underline"
-            )
-        )
+                cls="text-red-500 hover:underline",
+            ),
+        ),
     )
+
 
 def VenueForm(action, submit_label="Submit", venue_id=None):
     return Form(
@@ -66,6 +67,7 @@ def VenueForm(action, submit_label="Submit", venue_id=None):
         SubmitBtn(submit_label),
     )
 
+
 def LabeledInput(label, _id, _type="text", placeholder="", required=False):
     return Label(cls="block")(
         Span(label, cls="text-gray-700"),
@@ -78,6 +80,7 @@ def LabeledInput(label, _id, _type="text", placeholder="", required=False):
             cls="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50",
         ),
     )
+
 
 def LabeledTextarea(label, _id, placeholder="", required=False, rows=3):
     return Label(cls="block")(
