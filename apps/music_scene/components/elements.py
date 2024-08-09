@@ -23,4 +23,4 @@ def HoverBtnPrimary(label: str, **kwargs):
 
 
 def SubmitBtn(label: str, **kwargs):
-    return Button(label, cls=_class_str(hover_btn_classes), **kwargs)
+    return Button(label, cls=_class_str(hover_btn_classes), type="submit", **kwargs)

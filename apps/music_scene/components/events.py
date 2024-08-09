@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastcore.basics import patch
-from fasthtml.common import Card, P, Div, H2, A, H1
+from fasthtml.common import Card, P, Div, H2, A, H1, Script
 
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
@@ -70,23 +70,29 @@ def CompactEventList(events, **kwargs):
     css_classes = " ".join(["border-b-2", "py-1", kwargs.pop("cls", "")])
 
     return [
-        Grid(cols=4, cls=css_classes, id=f"event-row-{event.id}")(
-            Div(f"{event.title}: {event.artist}" if event.artist else event.title),
-            Div(event.date),
-            Div(f"{event.start_time}" if event.start_time else "-"),
-            Div(
-                A(
-                    href=f"/edit_event/{event.id}",
-                    cls="underline hover:bg-rose-200 inline-block px-1",
-                    hx_get=f"/edit_event/{event.id}",
-                    hx_target=f"#event-row-{event.id}",
-                    hx_swap="outerHTML",
-                )("Edit"),
-                A(
-                    href=f"/event/{event.id}",
-                    cls="underline hover:bg-blue-200 inline-block px-1",
-                )("View"),
+        Div(
+            Grid(cols=4, cls=css_classes, id=f"event-row-{event.id}")(
+                Div(f"{event.title}: {event.artist}" if event.artist else event.title),
+                Div(event.date),
+                Div(f"{event.start_time}" if event.start_time else "-"),
+                Div(
+                A( id=f"edit-btn-{event.id}",
+                        href=f"/edit_event/{event.id}",
+                        cls="underline hover:bg-rose-200 inline-block px-1",
+                        hx_get=f"/edit_event/{event.id}",
+                        hx_target=f"#event-edit-form-{event.id}",
+                        hx_swap="innerHTML"
+                    )("Edit"),
+                    A(href=f"/event/{event.id}", cls="underline hover:bg-blue-200 inline-block px-1")("View"),
+                ),
             ),
+            Div(id=f"event-edit-form-{event.id}", cls="hidden"),
+            Script(f"""
+                me('#edit-btn-{event.id}').on('click', ev => {{
+                    me('#event-row-{event.id}').classToggle('hidden');
+                    me('#event-edit-form-{event.id}').classToggle('hidden');
+                }})
+            """)
         )
         for event in events
     ]

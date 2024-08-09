@@ -3,14 +3,14 @@ from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
 
 
-def EventForm(action, submit_label="Submit"):
-    return Form(
+def EventForm(action, submit_label="Submit", event_id=None):
+    return Div(cls="py-4 px-2 bg-orange-200")(Form(
         action=action,
         method="post",
         cls="space-y-4",
         hx_post=action,
-        hx_target="closest div[id^='event-row-']",
-        hx_swap="outerHTML",
+        hx_target=f"#event-list",
+        id=f"event-form-{event_id}",
     )(
         Grid(cols=2)(
             LabeledInput("Event Title", "title", required=True),
@@ -28,12 +28,13 @@ def EventForm(action, submit_label="Submit"):
             LabeledTextarea("Event Description", "description")
         ),
         SubmitBtn(submit_label),
-        HoverBtnPrimary(
+        Button(
             "Cancel",
-            hx_get=f"/compact-view",
-            hx_target="#event-list",
+            cls="btn btn-secondary cancel-btn",
         ),
-    )
+        Script(f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )""")
+    ))
+
 
 
 
