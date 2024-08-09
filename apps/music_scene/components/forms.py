@@ -1,11 +1,18 @@
 from fasthtml.common import *
-
+from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn, HoverBtnPrimary
 
 
 def EventForm(action, submit_label="Submit"):
-    return Form(action=action, method="post", cls="space-y-4")(
-        FieldGroup(
+    return Form(
+        action=action,
+        method="post",
+        cls="space-y-4",
+        hx_post=action,
+        hx_target="closest div[id^='event-row-']",
+        hx_swap="outerHTML",
+    )(
+        Grid(cols=2)(
             LabeledInput("Event Title", "title", required=True),
             LabeledInput(
                 "Artist",
@@ -18,13 +25,16 @@ def EventForm(action, submit_label="Submit"):
                 "Venue", "venue", placeholder="Venue name or location of event"
             ),
             LabeledInput("URL", "url"),
-            LabeledTextarea("Event Description", "description"),
-            SubmitBtn(submit_label),
-            HoverBtnPrimary(
-                "Cancel", hx_get="/control-panel", hx_target="#control-panel"
-            ),
-        )
+            LabeledTextarea("Event Description", "description")
+        ),
+        SubmitBtn(submit_label),
+        HoverBtnPrimary(
+            "Cancel",
+            hx_get=f"/compact-view",
+            hx_target="#event-list",
+        ),
     )
+
 
 
 def LabeledInput(label, _id, _type="text", placeholder="", required=False):

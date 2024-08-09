@@ -63,21 +63,29 @@ def EventDetails(event: Event):
     )
 
 
+# In events.py
+
+
 def CompactEventList(events, **kwargs):
     css_classes = " ".join(["border-b-2", "py-1", kwargs.pop("cls", "")])
 
     return [
-        Grid(cols=4, cls=css_classes)(
+        Grid(cols=4, cls=css_classes, id=f"event-row-{event.id}")(
             Div(f"{event.title}: {event.artist}" if event.artist else event.title),
             Div(event.date),
             Div(f"{event.start_time}" if event.start_time else "-"),
             Div(
-                A(href=f"/edit_event/{event.id}", cls="underline hover:bg-rose-200 inline-block px-1")(
-                    "Edit"
-                ),
-                A(href=f"/event/{event.id}", cls="underline hover:bg-blue-200 inline-block px-1")(
-                    "View"
-                ),
+                A(
+                    href=f"/edit_event/{event.id}",
+                    cls="underline hover:bg-rose-200 inline-block px-1",
+                    hx_get=f"/edit_event/{event.id}",
+                    hx_target=f"#event-row-{event.id}",
+                    hx_swap="outerHTML",
+                )("Edit"),
+                A(
+                    href=f"/event/{event.id}",
+                    cls="underline hover:bg-blue-200 inline-block px-1",
+                )("View"),
             ),
         )
         for event in events

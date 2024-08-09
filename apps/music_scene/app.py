@@ -48,9 +48,12 @@ def get():
     return (
         Grid(cols=4)(
             Div(id="event-list", cls="col-span-3")(
-                A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls="underline")(
-                    "Full View"
-                ),
+                A(
+                    href="/full-view",
+                    hx_get="/full-view",
+                    hx_target="#event-list",
+                    cls="underline",
+                )("Full View"),
                 *CompactEventList(upcoming_events, cls="mt-4"),
             ),
             ControlPanel(),
@@ -65,15 +68,23 @@ def get():
 
 @rt("/full-view")
 def get():
-    return A(href="/compact-view", hx_get="/compact-view", hx_target="#event-list", cls="underline")(
-        "Compact View"
-    ), Div(cls="mt-4")(*events(order_by="date"))
+    return A(
+        href="/compact-view",
+        hx_get="/compact-view",
+        hx_target="#event-list",
+        cls="underline",
+    )("Compact View"), Div(cls="mt-4")(*events(order_by="date"))
 
 
 @rt("/compact-view")
 def get():
     return Div(
-        A(href="/full-view", hx_get="/full-view", hx_target="#event-list", cls="underline")("Full View"),
+        A(
+            href="/full-view",
+            hx_get="/full-view",
+            hx_target="#event-list",
+            cls="underline",
+        )("Full View"),
         *CompactEventList(events(order_by="date"), cls="mt-4"),
     )
 
@@ -113,15 +124,16 @@ def get(event_id: int):
     return Titled(f"Event: {event.title}", Div(EventDetails(event)))
 
 
+# In app.py
+
+
 @rt("/edit_event/{event_id}")
 def get(event_id: int):
     event = events[event_id]
-    return Titled(
-        f"Edit Event: {event.title}",
-        Container(
-            fill_form(EventForm(f"/edit_event/{event_id}", "Save Event"), event),
-            event,
-        ),
+    return Grid(cols=4, id=f"event-row-{event_id}", cls="border-b-2 py-1")(
+        Div(cls="col-span-4")(
+            fill_form(EventForm(f"/edit_event/{event_id}", "Save"), event)
+        )
     )
 
 
@@ -147,7 +159,7 @@ def post(
         description=description,
     )
     events.update(updated_event)
-    return RedirectResponse(url=f"/event/{event_id}", status_code=303)
+    return CompactEventList([updated_event])[0]
 
 
 serve(port=5045)
