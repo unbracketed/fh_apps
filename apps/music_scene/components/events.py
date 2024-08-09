@@ -84,9 +84,6 @@ def EventDetails(event: Event):
     )
 
 
-# In events.py
-
-
 def CompactEventList(events, **kwargs):
     css_classes = " ".join(["border-b-2", "mt-4", "py-1", kwargs.pop("cls", "")])
 
@@ -138,8 +135,12 @@ def CompactEventList(events, **kwargs):
 
 def EventsActions(*args, view_mode="full", **kwargs):
     if view_mode == "full":
-        btn = SlimBtn("Compact View", "/compact-view")
+        btn = SlimBtn(
+            "Compact View", "/compact-view", cls="text-black bg-yellow-50 border"
+        )
     else:
-        btn = SlimBtn("Full View", "/full-view")
-    add_event = SlimBtn("Add Event", "/add-event", cls="bg-orange-500 hover:bg-orange-600")
+        btn = SlimBtn("Full View", "/full-view", cls="bg-lime-500 hover:bg-lime-600")
+    add_event = SlimBtn(
+        "Add Event", "/add-event", cls="bg-orange-500 hover:bg-orange-600"
+    )
     return Div(btn, add_event, *args, id="events-actions", **kwargs)

@@ -27,7 +27,7 @@ def SubmitBtn(label: str, **kwargs):
 
 
 def SlimBtn(label: str, action, **kwargs):
-    css = ["text-white", "bg-lime-600", "px-2", "hover:bg-lime-700", "rounded", kwargs.pop("cls", "")]
+    css = ["text-white", "px-2", "rounded", kwargs.pop("cls", "")]
     return A(
         href=action,
         hx_get=action,
