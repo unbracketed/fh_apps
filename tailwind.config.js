@@ -1,7 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors')
 module.exports = {
-  content: ["./apps/**/app.py", "./apps/**/components/**/*.py", "./apps/**/views/**/*.py"],
+  content: [
+    "./apps/**/app.py",
+    "./apps/**/components/**/*.py",
+    "./apps/**/views/**/*.py"
+  ],
   theme: {
     extend: {
       fontFamily: {
