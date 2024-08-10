@@ -11,7 +11,7 @@ def homeview():
     return Container(
         H1(cls="text-3xl py-4")("Music Scene Manager"),
         EventsActions(view_mode="compact"),
-        Div(id="event-list", cls="col-span-3")(
+        Div(id="event-list", cls="col-span-3 bg-orange-100")(
             *CompactEventList(upcoming_events),
         ),
     )

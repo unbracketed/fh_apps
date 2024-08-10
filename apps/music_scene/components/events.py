@@ -71,7 +71,16 @@ def EventDetails(event: Event):
 
 
 def CompactEventList(events, **kwargs):
-    css_classes = " ".join(["border-b-2", "mt-4", "py-1", kwargs.pop("cls", "")])
+    css_classes = " ".join(
+        [
+            "border-b-2",
+            "border-slate-700",
+            "mt-4",
+            "py-1",
+            "px-2",
+            kwargs.pop("cls", ""),
+        ]
+    )
 
     return [
         Grid(cols=12, cls=f"{css_classes} border-b-4")(
