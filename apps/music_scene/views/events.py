@@ -11,7 +11,7 @@ def homeview():
     return Container(
         H1(cls="text-3xl py-4")("Music Scene Manager"),
         EventsActions(view_mode="compact"),
-        Div(id="event-list", cls="bg-orange-100")(
+        Div(id="event-list", cls="bg-orange-100 border-2 border-slate-500")(
             *CompactEventList(upcoming_events),
         ),
     )
@@ -27,7 +27,7 @@ def compact_list():
 def calendar():
     return (
         #EventsActions(view_mode="full", hx_swap_oob="#events-actions"),
-        Div(cls="mt-4")(*events(order_by="date")),
+        Div(cls="mt-4 bg-slate-50")(*events(order_by="date")),
     )
 
 
