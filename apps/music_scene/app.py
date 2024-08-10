@@ -5,7 +5,6 @@ from starlette.responses import FileResponse
 from apps.music_scene.components.events import (
     EventDetails,
     CompactEventList,
-    EventsActions,
 )
 from apps.music_scene.components.layout import layout
 import apps.music_scene.views.events as events_views
