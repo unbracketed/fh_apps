@@ -130,7 +130,7 @@ def CompactEventList(events, **kwargs):
                         cls="underline hover:bg-red-500 px-1",
                         hx_post=f"/event/delete/{event.id}",
                         hx_target="#event-list",
-                        hx_confirm=f"Delete {event.name}?"
+                        hx_confirm=f"Delete {event.name}?",
                     )("Del"),
                 ),
             ),
@@ -154,12 +154,12 @@ def CompactEventList(events, **kwargs):
 def EventsActions(*args, view_mode="full", **kwargs):
     if view_mode == "full":
         btn = SlimBtn(
-            "Compact View", "/compact-view", cls="text-black bg-yellow-50 border"
+            "Compact View", "/events/compact-view", cls="text-black bg-slate-100 border"
         )
     else:
-        btn = SlimBtn("Full View", "/full-view", cls="bg-lime-500 hover:bg-lime-600")
+        btn = SlimBtn("Full View", "/events/full-view", cls="bg-lime-500 hover:bg-lime-600")
     add_event = SlimBtn(
-        "Add Event", "/add-event", cls="bg-orange-500 hover:bg-orange-600"
+        "Add Event", "/events/add-event", cls="bg-orange-500 hover:bg-orange-600"
     )
     venues_btn = SlimBtn("Venues", "/venues", cls="bg-green-500 hover:bg-green-600")
-    return Div(btn, add_event, venues_btn, *args, id="events-actions", **kwargs)
+    return Div(btn, add_event, venues_btn, *args, id="events-actions", cls="mb-4",**kwargs)

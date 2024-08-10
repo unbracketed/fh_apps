@@ -8,6 +8,7 @@ from apps.music_scene.components.events import (
     EventsActions,
 )
 from apps.music_scene.components.layout import layout
+import apps.music_scene.views.events as events_views
 from components.forms import EventForm
 from apps.music_scene.models import Event, events, Venue, venues
 from apps.music_scene.components.venues import VenueList, VenueForm
@@ -45,41 +46,14 @@ async def get(fname: str, ext: str):
     return FileResponse(f"/static/{fname}.{ext}")
 
 
-@rt("/")
-@layout()
-def get():
-    upcoming_events = events(order_by="date")
-
-    return (
-        EventsActions(view_mode="compact"),
-        Div(id="event-list", cls="col-span-3")(
-            *CompactEventList(upcoming_events),
-        ),
-    )
+app.add_route("/", events_views.homeview)
+app.add_route("/events/full-view", events_views.full_list)
+app.add_route("/events/compact-view", events_views.compact_list)
+app.add_route("/events/add-event", events_views.add_event_form)
 
 
-@rt("/full-view")
-def get():
-    return (
-        EventsActions(view_mode="full", hx_swap_oob="#events-actions"),
-        Div(cls="mt-4")(*events(order_by="date")),
-    )
 
-
-@rt("/compact-view")
-def get():
-    return (
-        EventsActions(view_mode="compact", hx_swap_oob="#events-actions"),
-        Div(cls="mt-4")(*CompactEventList(events(order_by="date"))),
-    )
-
-
-@rt("/add-event")
-def get():
-    return (Div(EventForm("/add-event", "Add Event")),)
-
-
-@rt("/add-event")
+@rt("/events/add-event")
 def post(
     title: str,
     artist: str,
@@ -148,7 +122,7 @@ def post(
 @rt("/event/copy/{event_id}")
 def get(event_id: int):
     src_event = events[event_id]
-    form = EventForm("/add-event", f"Copy of {src_event.title}", event_id=event_id)
+    form = EventForm("/events/add-event", f"Copy of {src_event.title}", event_id=event_id)
     return Div(fill_form(form, src_event))
 
 
