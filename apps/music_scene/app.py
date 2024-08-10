@@ -47,10 +47,9 @@ async def get(fname: str, ext: str):
 
 
 app.add_route("/", events_views.homeview)
-app.add_route("/events/full-view", events_views.full_list)
-app.add_route("/events/compact-view", events_views.compact_list)
+app.add_route("/calendar", events_views.calendar)
+app.add_route("/events", events_views.compact_list)
 app.add_route("/events/add-event", events_views.add_event_form)
-
 
 
 @rt("/events/add-event")
@@ -122,7 +121,9 @@ def post(
 @rt("/event/copy/{event_id}")
 def get(event_id: int):
     src_event = events[event_id]
-    form = EventForm("/events/add-event", f"Copy of {src_event.title}", event_id=event_id)
+    form = EventForm(
+        "/events/add-event", f"Copy of {src_event.title}", event_id=event_id
+    )
     return Div(fill_form(form, src_event))
 
 

@@ -34,24 +34,10 @@ def _ts_full(time_str):
 
 @patch
 def __ft__(self: Event):
-    return Card(
-        H2(self.title, cls="text-xl font-semibold"),
-        P(f"Artist: {self.artist}", cls="text-gray-600") if self.artist else "",
+    return Card(cls="mb-4 p-4 border rounded bg-slate-700 text-white")(
+        H2(self.name, cls="text-xl font-semibold"),
         P(f"Date: {_ds_full(self.date)}", cls="text-sm"),
         P(f"Venue: {self.venue}", cls="text-sm") if self.venue else "",
-        Div(cls="mt-2")(
-            A(
-                href=f"/event/{self.id}",
-                cls="btn btn-primary text-blue-500 hover:underline mr-4",
-            )("View Details"),
-            A(
-                href=f"/edit-event/{self.id}",
-                cls="btn btn-secondary text-green-500 hover:underline",
-            )(
-                "Edit",
-            ),
-        ),
-        cls="mb-4 p-4 border rounded",
     )
 
 
@@ -151,15 +137,24 @@ def CompactEventList(events, **kwargs):
     ]
 
 
-def EventsActions(*args, view_mode="full", **kwargs):
-    if view_mode == "full":
-        btn = SlimBtn(
-            "Compact View", "/events/compact-view", cls="text-black bg-slate-100 border"
-        )
-    else:
-        btn = SlimBtn("Full View", "/events/full-view", cls="bg-lime-500 hover:bg-lime-600")
+def EventsActions(*args, **kwargs):
+    btn = SlimBtn("Manage Events", "/events", cls="bg-lime-500 hover:bg-lime-600")
     add_event = SlimBtn(
-        "Add Event", "/events/add-event", cls="text-white bg-orange-500 hover:bg-orange-600"
+        "Add Event",
+        "/events/add-event",
+        cls="text-white bg-orange-500 hover:bg-orange-600",
     )
-    venues_btn = SlimBtn("Venues", "/venues", cls="text-white bg-green-500 hover:bg-green-600")
-    return Div(btn, add_event, venues_btn, *args, id="events-actions", cls="mb-4",**kwargs)
+    venues_btn = SlimBtn(
+        "Venues", "/venues", cls="text-white bg-green-500 hover:bg-green-600"
+    )
+    calendar_btn = (SlimBtn("Calendar", "/calendar", cls="bg-slate-700 text-white"),)
+    return Div(
+        btn,
+        add_event,
+        venues_btn,
+        calendar_btn,
+        *args,
+        id="events-actions",
+        cls="mb-4",
+        **kwargs,
+    )
