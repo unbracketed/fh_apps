@@ -137,16 +137,15 @@ def post(event_id: int):
 # Venues
 # -------
 @rt("/venues")
-@layout(title="Venues")
 def get():
     all_venues = venues(order_by="name")
     return (
         Div(id="venue-list")(
             VenueList(all_venues),
         ),
-        Div(id="venue-form")(
-            VenueForm("/venues/add", "Add Venue"),
-        ),
+        # Div(id="venue-form")(
+        #     VenueForm("/venues/add", "Add Venue"),
+        # ),
     )
 
 

@@ -5,7 +5,7 @@ from apps.music_scene.components.elements import SubmitBtn
 
 def VenueList(venues):
     return Div(
-        H2("Venues", cls="text-2xl font-bold mb-4"),
+        # H2("Venues", cls="text-2xl font-bold mb-4"),
         Table(cls="w-full")(
             Thead(
                 Tr(
