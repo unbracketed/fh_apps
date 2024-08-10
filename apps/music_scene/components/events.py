@@ -88,7 +88,7 @@ def CompactEventList(events, **kwargs):
     css_classes = " ".join(["border-b-2", "mt-4", "py-1", kwargs.pop("cls", "")])
 
     return [
-        Grid(cols=12, cls=css_classes)(
+        Grid(cols=12, cls=f"{css_classes} border-b-4")(
             Div(cls="col-span-4 font-bold")("Event Name / Artist"),
             Div(cls="col-span-4 font-bold")("Venue"),
             Div(cls="font-bold")("Date"),
