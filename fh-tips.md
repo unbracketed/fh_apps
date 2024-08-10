@@ -4,8 +4,6 @@
 
 There are a number of special parameter names, which will be passed useful information about the request:
 
-`session`: the Starlette session; 
-
 `request`: the Starlette request; 
 
 `auth`: the value of `scope['auth']`;
