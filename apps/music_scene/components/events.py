@@ -159,7 +159,7 @@ def EventsActions(*args, view_mode="full", **kwargs):
     else:
         btn = SlimBtn("Full View", "/events/full-view", cls="bg-lime-500 hover:bg-lime-600")
     add_event = SlimBtn(
-        "Add Event", "/events/add-event", cls="bg-orange-500 hover:bg-orange-600"
+        "Add Event", "/events/add-event", cls="text-white bg-orange-500 hover:bg-orange-600"
     )
-    venues_btn = SlimBtn("Venues", "/venues", cls="bg-green-500 hover:bg-green-600")
+    venues_btn = SlimBtn("Venues", "/venues", cls="text-white bg-green-500 hover:bg-green-600")
     return Div(btn, add_event, venues_btn, *args, id="events-actions", cls="mb-4",**kwargs)
