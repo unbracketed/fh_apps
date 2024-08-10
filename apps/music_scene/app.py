@@ -49,30 +49,7 @@ app.add_route("/", events_views.homeview)
 app.add_route("/calendar", events_views.calendar)
 app.add_route("/events", events_views.compact_list)
 app.add_route("/events/add-event", events_views.add_event_form)
-
-
-@rt("/events/add-event")
-def post(
-    title: str,
-    artist: str,
-    date: str,
-    start_time: str,
-    url: str,
-    venue_id: str,
-    description: str,
-):
-    venue = venues[venue_id].name
-    new_event = dict(
-        title=title,
-        artist=artist,
-        date=date,
-        start_time=start_time,
-        venue=venue,
-        url=url,
-        description=description,
-    )
-    events.insert(new_event)
-    return Div(*CompactEventList(events(order_by="date")))
+app.add_route("/events/add-event", events_views.add_event_handler, methods=["POST"])
 
 
 @rt("/event/{event_id}")
