@@ -2,7 +2,6 @@ from datetime import datetime
 from fastcore.basics import patch
 from fasthtml.common import Card, P, Div, H2, A, H1, Script
 
-from apps.music_scene.components.elements import SlimBtn
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
 

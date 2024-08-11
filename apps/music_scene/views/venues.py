@@ -1,7 +1,7 @@
-from fasthtml import Div, fill_form, Title
+from fasthtml import Div, fill_form
 from starlette.requests import Request
 
-from apps.music_scene.components.layout import Container, MultiViewContainer
+from apps.music_scene.components.layout import MultiViewContainer
 from apps.music_scene.components.venues import VenueList, VenueForm
 from apps.music_scene.models import venues, Venue
 

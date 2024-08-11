@@ -6,7 +6,7 @@ from apps.music_scene.components.events import (
     EventDetails,
 )
 from apps.music_scene.components.forms import EventForm
-from apps.music_scene.components.layout import Container, NavMenu, MultiViewContainer
+from apps.music_scene.components.layout import MultiViewContainer
 from apps.music_scene.models import events, venues, Event
 
 

@@ -91,7 +91,6 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
     return Div(*args, cls=" ".join(filter(None, classes)), **kwargs)
 
 
-
 def NavMenu(*args, **kwargs):
     btn = SlimBtn(
         "Events",
