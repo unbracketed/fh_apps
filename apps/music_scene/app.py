@@ -2,15 +2,12 @@ from fasthtml import fill_form
 from fasthtml.common import Div, Titled, Link, fast_app, serve
 from starlette.responses import FileResponse
 
-from apps.music_scene.components.events import (
-    EventDetails,
-    CompactEventList,
-)
-from apps.music_scene.components.layout import layout
+from apps.music_scene.components.events import CompactEventList
 import apps.music_scene.views.events as events_views
 from components.forms import EventForm
 from apps.music_scene.models import Event, events, Venue, venues
 from apps.music_scene.components.venues import VenueList, VenueForm
+
 
 head_section = (
     Link(rel="preconnect", href="https://fonts.googleapis.com"),
@@ -19,10 +16,7 @@ head_section = (
         rel="stylesheet",
         href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Karla:ital,wght@0,200..800;1,200..800&display=swap",
     ),
-    Link(
-        rel="stylesheet",
-        href="/static/base.css",
-    ),
+    Link(rel="stylesheet", href="/static/base.css"),
 )
 
 
@@ -50,63 +44,13 @@ app.add_route("/calendar", events_views.calendar)
 app.add_route("/events", events_views.compact_list)
 app.add_route("/events/add-event", events_views.add_event_form)
 app.add_route("/events/add-event", events_views.add_event_handler, methods=["POST"])
-
-
-@rt("/event/{event_id}")
-@layout()
-def get(event_id: int):
-    event = events[event_id]
-    return Titled(f"Event: {event.title}", Div(EventDetails(event)))
-
-
-@rt("/edit-event/{event_id}")
-def get(event_id: int):
-    event = events[event_id]
-    venue_id = venues.lookup({"name": event.venue})
-    setattr(event, "venue_id", venue_id)
-    form = EventForm(f"/edit-event/{event_id}", "Edit Event", event_id=event_id)
-    return Div(cls="col-span-4")(fill_form(form, event))
-
-
-@rt("/edit-event/{event_id}")
-def post(
-    event_id: int,
-    title: str,
-    artist: str,
-    date: str,
-    start_time: str,
-    url: str,
-    venue_id: str,
-    description: str,
-):
-    venue = venues[venue_id].name
-    updated_event = Event(
-        id=event_id,
-        title=title,
-        artist=artist,
-        date=date,
-        start_time=start_time,
-        venue=venue,
-        url=url,
-        description=description,
-    )
-    events.update(updated_event)
-    return Div(*CompactEventList(events(order_by="date")))
-
-
-@rt("/event/copy/{event_id}")
-def get(event_id: int):
-    src_event = events[event_id]
-    form = EventForm(
-        "/events/add-event", f"Copy of {src_event.title}", event_id=event_id
-    )
-    return Div(fill_form(form, src_event))
-
-
-@rt("/event/delete/{event_id}")
-def post(event_id: int):
-    events.delete(event_id)
-    return Div(*CompactEventList(events(order_by="date")))
+app.add_route("/event/{event_id}", events_views.event_detail)
+app.add_route("/edit-event/{event_id}", events_views.edit_event_form)
+app.add_route(
+    "/edit-event/{event_id}", events_views.edit_event_handler, methods=["POST"]
+)
+app.add_route("/event/copy/{event_id}", events_views.copy_event_form)
+app.add_route("/event/delete/{event_id}", events_views.delete_event, methods=["POST"])
 
 
 # --------

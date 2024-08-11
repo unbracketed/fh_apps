@@ -165,10 +165,7 @@ def EventsActions(*args, **kwargs):
         hx_push_url="true",
     )
     calendar_btn = SlimBtn(
-        "Calendar",
-        "/calendar",
-        cls="bg-slate-700 text-white",
-        hx_push_url="true"
+        "Calendar", "/calendar", cls="bg-slate-700 text-white", hx_push_url="true"
     )
     return Div(
         btn,
