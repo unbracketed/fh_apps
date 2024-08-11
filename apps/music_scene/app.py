@@ -23,6 +23,7 @@ head_section = (
 exception_handlers = {
     404: lambda req, exc: Titled("404: I don't exist!"),
     418: lambda req, exc: Titled("418: I'm a teapot!"),
+    500: lambda req, exc: Titled("500: Hey who turned off the music?"),
 }
 
 
