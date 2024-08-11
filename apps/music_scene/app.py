@@ -49,7 +49,8 @@ app.add_route(
 app.add_route("/event/copy/{event_id}", events_views.copy_event_form)
 app.add_route("/event/delete/{event_id}", events_views.delete_event, methods=["POST"])
 
-app.add_route("/venues", venues_views.venues_list)
+app.add_route("/venues", venues_views.index)
+app.add_route("/venues-list", venues_views.venues_list)
 app.add_route("/venues/add-venue", venues_views.add_venue_handler, methods=["POST"])
 app.add_route("/venues/edit/{venue_id}", venues_views.edit_venue_form)
 app.add_route(

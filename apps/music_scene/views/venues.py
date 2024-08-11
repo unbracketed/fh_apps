@@ -1,18 +1,25 @@
-from fasthtml import Div, fill_form
+from fasthtml import Div, fill_form, Title
+from starlette.requests import Request
 
+from apps.music_scene.components.layout import Container, MultiViewContainer
 from apps.music_scene.components.venues import VenueList, VenueForm
 from apps.music_scene.models import venues, Venue
 
 
+def index(request: Request):
+    venue_list = Div(id="venue-list")(
+        VenueList(venues(order_by="name")),
+    )
+    # check the request headers for 'hx-request'
+    if request.headers.get("hx-request"):
+        return venue_list
+    return MultiViewContainer("Venues", venue_list)
+
+
 def venues_list():
     all_venues = venues(order_by="name")
-    return (
-        Div(id="venue-list")(
-            VenueList(all_venues),
-        ),
-        # Div(id="venue-form")(
-        #     VenueForm("/venues/add", "Add Venue"),
-        # ),
+    return Div(id="venue-list")(
+        VenueList(all_venues),
     )
 
 
@@ -36,6 +43,12 @@ def add_venue_handler(
     )
     venues.insert(new_venue)
     return VenueList(venues(order_by="name"))
+
+
+def add_venue_form():
+    return Div(id="venue-form")(
+        VenueForm("/venues/add", "Add Venue"),
+    )
 
 
 def edit_venue_form(venue_id: int):

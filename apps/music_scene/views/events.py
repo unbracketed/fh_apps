@@ -1,38 +1,39 @@
 from fasthtml import Div, H1, Titled, fill_form
+from starlette.requests import Request
 
 from apps.music_scene.components.events import (
-    EventsActions,
     CompactEventList,
     EventDetails,
 )
 from apps.music_scene.components.forms import EventForm
-from apps.music_scene.components.layout import Container
+from apps.music_scene.components.layout import Container, NavMenu, MultiViewContainer
 from apps.music_scene.models import events, venues, Event
 
 
-def homeview():
+def homeview(request: Request):
     upcoming_events = events(order_by="date")
-    return Container(
-        H1(cls="text-3xl py-4")("Music Scene Manager"),
-        EventsActions(view_mode="compact"),
-        Div(id="event-list", cls="bg-orange-100 border-2 border-slate-500")(
-            *CompactEventList(upcoming_events),
-        ),
+    event_list = Div(id="event-list", cls="bg-slate-50 border-2 border-slate-500")(
+        *CompactEventList(upcoming_events),
     )
+    if request.headers.get("hx-request"):
+        return event_list
+    return MultiViewContainer("Events", event_list)
 
 
-def compact_list():
-    return (
-        # EventsActions(view_mode="compact", hx_swap_oob="#events-actions"),
-        Div(cls="mt-4")(*CompactEventList(events(order_by="date"))),
+async def compact_list(request: Request):
+    event_list = Div(cls="bg-slate-50 border-2 border-slate-500")(
+        *CompactEventList(events(order_by="date"))
     )
+    if request.headers.get("hx-request"):
+        return event_list
+    return MultiViewContainer("Events", event_list)
 
 
-def calendar():
-    return (
-        # EventsActions(view_mode="full", hx_swap_oob="#events-actions"),
-        Div(cls="mt-4 bg-slate-50")(*events(order_by="date")),
-    )
+def calendar(request: Request):
+    events_list = Div(cls="mt-4 bg-slate-50")(*events(order_by="date"))
+    if request.headers.get("hx-request"):
+        return events_list
+    return MultiViewContainer("Calendar", events_list)
 
 
 def add_event_form():

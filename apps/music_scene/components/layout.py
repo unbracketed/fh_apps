@@ -1,8 +1,7 @@
-import functools
-
+from fasthtml import A
 from fasthtml.common import Div, H1, Title
 
-from apps.music_scene.components.elements import HoverBtnPrimary
+from apps.music_scene.components.elements import SlimBtn
 
 
 def Container(*args, fluid=False, center=True, padding=True, **kwargs):
@@ -92,23 +91,53 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
     return Div(*args, cls=" ".join(filter(None, classes)), **kwargs)
 
 
-def Layout(*args, **kwargs):
-    """Layout for the blog, but can be adapted to anything"""
-    title = kwargs.get("title", "Music Scene Calendar")
-    return Title(title), Container(H1(cls="text-3xl py-4")(title), *args, **kwargs)
+
+def NavMenu(*args, **kwargs):
+    btn = SlimBtn(
+        "Events",
+        "/events",
+        cls="bg-lime-500 hover:bg-lime-600",
+        hx_push_url="true",
+    )
+    add_event = SlimBtn(
+        "Add Event",
+        "/events/add-event",
+        cls="text-white bg-orange-500 hover:bg-orange-600",
+    )
+    venues_btn = SlimBtn(
+        "Venues",
+        "/venues",
+        cls="text-white bg-emerald-600 hover:bg-emerald-700",
+        hx_push_url="true",
+    )
+    calendar_btn = SlimBtn(
+        "Calendar", "/calendar", cls="bg-slate-700 text-white", hx_push_url="true"
+    )
+    return Div(
+        btn,
+        add_event,
+        venues_btn,
+        calendar_btn,
+        *args,
+        id="nav-menu",
+        cls="mb-4",
+        **kwargs,
+    )
 
 
-def layout(*dec_args, **dec_kwargs):
-    """Decorator factory to wrap a view function with a layout"""
-
-    def decorator(view_function):
-        @functools.wraps(view_function)
-        def _wrapper(*args, **kwargs):
-            result = view_function(*args, **kwargs)
-            # Custom processing if needed
-            # ...
-            return Layout(*result, *dec_args, **dec_kwargs)
-
-        return _wrapper
-
-    return decorator
+def MultiViewContainer(title, *args, **kwargs):
+    # if the first arg isn't a string, raise an exception
+    if not isinstance(title, str):
+        raise ValueError("First argument must be a string")
+    return (
+        Title(f"{title} | Music Scene Manager"),
+        Container(
+            A(href="/")(
+                H1(id="view-title", cls="text-3xl py-4")(f"Music Scene Manager")
+            ),
+            NavMenu(),
+            Div(id="view-actions")("coming soon"),
+            Div(id="view-panel")(*args),
+            **kwargs,
+        ),
+    )

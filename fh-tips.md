@@ -4,11 +4,11 @@
 
 There are a number of special parameter names, which will be passed useful information about the request:
 
-`request`: the Starlette request; 
+`request`: the Starlette request (`starlette.requests.Request`); 
 
 `auth`: the value of `scope['auth']`;
 
-`htmx`: the HTMX headers, if any; 
+`htmx`: the HTMX headers, if any; (`HtmxHeaders`) 
 
 `app`: the FastHTML app object.
 

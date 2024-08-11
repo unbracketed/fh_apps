@@ -144,36 +144,3 @@ def CompactEventList(events, **kwargs):
         )
         for event in events
     ]
-
-
-def EventsActions(*args, **kwargs):
-    btn = SlimBtn(
-        "Events",
-        "/events",
-        cls="bg-lime-500 hover:bg-lime-600",
-        hx_push_url="true",
-    )
-    add_event = SlimBtn(
-        "Add Event",
-        "/events/add-event",
-        cls="text-white bg-orange-500 hover:bg-orange-600",
-    )
-    venues_btn = SlimBtn(
-        "Venues",
-        "/venues",
-        cls="text-white bg-emerald-600 hover:bg-emerald-700",
-        hx_push_url="true",
-    )
-    calendar_btn = SlimBtn(
-        "Calendar", "/calendar", cls="bg-slate-700 text-white", hx_push_url="true"
-    )
-    return Div(
-        btn,
-        add_event,
-        venues_btn,
-        calendar_btn,
-        *args,
-        id="events-actions",
-        cls="mb-4",
-        **kwargs,
-    )
