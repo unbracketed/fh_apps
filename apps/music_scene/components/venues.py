@@ -30,7 +30,7 @@ def VenueRow(venue):
                 "Edit",
                 href=f"/venues/edit/{venue.id}",
                 hx_get=f"/venues/edit/{venue.id}",
-                hx_target="#venue-form",
+                hx_target="#venue-list",
                 cls="text-blue-500 hover:underline mr-2",
             ),
             A(

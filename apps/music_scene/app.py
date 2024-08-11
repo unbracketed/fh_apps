@@ -1,12 +1,8 @@
-from fasthtml import fill_form
-from fasthtml.common import Div, Titled, Link, fast_app, serve
+from fasthtml.common import Titled, Link, fast_app, serve
 from starlette.responses import FileResponse
 
-from apps.music_scene.components.events import CompactEventList
 import apps.music_scene.views.events as events_views
-from components.forms import EventForm
-from apps.music_scene.models import Event, events, Venue, venues
-from apps.music_scene.components.venues import VenueList, VenueForm
+import apps.music_scene.views.venues as venues_views
 
 
 head_section = (
@@ -53,82 +49,15 @@ app.add_route(
 app.add_route("/event/copy/{event_id}", events_views.copy_event_form)
 app.add_route("/event/delete/{event_id}", events_views.delete_event, methods=["POST"])
 
-
-# --------
-# Venues
-# -------
-@rt("/venues")
-def get():
-    all_venues = venues(order_by="name")
-    return (
-        Div(id="venue-list")(
-            VenueList(all_venues),
-        ),
-        # Div(id="venue-form")(
-        #     VenueForm("/venues/add", "Add Venue"),
-        # ),
-    )
-
-
-@rt("/venues/add")
-def post(
-    name: str,
-    address: str,
-    city: str,
-    state: str,
-    zip_code: str,
-    website: str,
-    description: str,
-):
-    new_venue = dict(
-        name=name,
-        address=address,
-        city=city,
-        state=state,
-        zip_code=zip_code,
-        website=website,
-        description=description,
-    )
-    venues.insert(new_venue)
-    return VenueList(venues(order_by="name"))
-
-
-@rt("/venues/edit/{venue_id}")
-def get(venue_id: int):
-    venue = venues[venue_id]
-    form = VenueForm(f"/venues/edit/{venue_id}", "Save", venue_id)
-    return Div(cls="col-span-4")(fill_form(form, venue))
-
-
-@rt("/venues/edit/{venue_id}")
-def post(
-    venue_id: int,
-    name: str,
-    address: str,
-    city: str,
-    state: str,
-    zip_code: str,
-    website: str,
-    description: str,
-):
-    updated_venue = Venue(
-        id=venue_id,
-        name=name,
-        address=address,
-        city=city,
-        state=state,
-        zip_code=zip_code,
-        website=website,
-        description=description,
-    )
-    venues.update(updated_venue)
-    return VenueList(venues(order_by="name"))
-
-
-@rt("/venues/delete/{venue_id}")
-def post(venue_id: int):
-    venues.delete(venue_id)
-    return VenueList(venues(order_by="name"))
+app.add_route("/venues", venues_views.venues_list)
+app.add_route("/venues/add-venue", venues_views.add_venue_handler, methods=["POST"])
+app.add_route("/venues/edit/{venue_id}", venues_views.edit_venue_form)
+app.add_route(
+    "/venues/edit/{venue_id}", venues_views.edit_venue_handler, methods=["POST"]
+)
+app.add_route(
+    "/venues/delete/{venue_id}", venues_views.delete_venue_handler, methods=["POST"]
+)
 
 
 serve(port=5045)
