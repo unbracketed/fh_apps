@@ -1,7 +1,14 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
-from apps.music_scene.components.elements import SubmitBtn
+from apps.music_scene.components.elements import SubmitBtn, SlimBtn
 
+
+def ViewActions():
+    return SlimBtn(
+        "Add Venue",
+        "/venues/add-venue",
+        cls="bg-lime-300 hover:bg-lime-400",
+    )
 
 def VenueList(venues):
     return Div(

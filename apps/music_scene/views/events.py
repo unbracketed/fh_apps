@@ -3,7 +3,7 @@ from starlette.requests import Request
 
 from apps.music_scene.components.events import (
     CompactEventList,
-    EventDetails,
+    EventDetails, ViewActions,
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import MultiViewContainer
@@ -16,8 +16,8 @@ def homeview(request: Request):
         *CompactEventList(upcoming_events),
     )
     if request.headers.get("hx-request"):
-        return event_list
-    return MultiViewContainer("Events", event_list)
+        return ViewActions(hx_oob_swap="true"), event_list
+    return MultiViewContainer("Events", ViewActions(), event_list)
 
 
 async def compact_list(request: Request):
@@ -25,8 +25,8 @@ async def compact_list(request: Request):
         *CompactEventList(events(order_by="date"))
     )
     if request.headers.get("hx-request"):
-        return event_list
-    return MultiViewContainer("Events", event_list)
+        return ViewActions(hx_oob_swap="true"), event_list
+    return MultiViewContainer("Events", ViewActions(), event_list)
 
 
 def calendar(request: Request):

@@ -2,7 +2,7 @@ from fasthtml import Div, fill_form
 from starlette.requests import Request
 
 from apps.music_scene.components.layout import MultiViewContainer
-from apps.music_scene.components.venues import VenueList, VenueForm
+from apps.music_scene.components.venues import VenueList, VenueForm, ViewActions
 from apps.music_scene.models import venues, Venue
 
 
@@ -13,7 +13,7 @@ def index(request: Request):
     # check the request headers for 'hx-request'
     if request.headers.get("hx-request"):
         return venue_list
-    return MultiViewContainer("Venues", venue_list)
+    return MultiViewContainer("Venues", ViewActions(), venue_list)
 
 
 def venues_list():

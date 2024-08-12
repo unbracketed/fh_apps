@@ -98,11 +98,6 @@ def NavMenu(*args, **kwargs):
         cls="bg-lime-500 hover:bg-lime-600",
         hx_push_url="true",
     )
-    add_event = SlimBtn(
-        "Add Event",
-        "/events/add-event",
-        cls="text-white bg-orange-500 hover:bg-orange-600",
-    )
     venues_btn = SlimBtn(
         "Venues",
         "/venues",
@@ -114,7 +109,6 @@ def NavMenu(*args, **kwargs):
     )
     return Div(
         btn,
-        add_event,
         venues_btn,
         calendar_btn,
         *args,
@@ -124,7 +118,9 @@ def NavMenu(*args, **kwargs):
     )
 
 
-def MultiViewContainer(title, *args, **kwargs):
+
+
+def MultiViewContainer(title, view_actions, *args, **kwargs):
     # if the first arg isn't a string, raise an exception
     if not isinstance(title, str):
         raise ValueError("First argument must be a string")
@@ -135,7 +131,7 @@ def MultiViewContainer(title, *args, **kwargs):
                 H1(id="view-title", cls="text-3xl py-4")(f"Music Scene Manager")
             ),
             NavMenu(),
-            Div(id="view-actions")("coming soon"),
+            Div(id="view-actions")(view_actions),
             Div(id="view-panel")(*args),
             **kwargs,
         ),

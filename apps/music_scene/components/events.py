@@ -2,6 +2,7 @@ from datetime import datetime
 from fastcore.basics import patch
 from fasthtml.common import Card, P, Div, H2, A, H1, Script
 
+from apps.music_scene.components.elements import SlimBtn
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.models import Event
 
@@ -39,6 +40,13 @@ def __ft__(self: Event):
         P(f"Venue: {self.venue}", cls="text-sm") if self.venue else "",
     )
 
+
+def ViewActions(**kwargs):
+    return Div(id="view-actions", **kwargs)(SlimBtn(
+        "Add Event",
+        "/events/add-event",
+        cls="text-white bg-orange-500 hover:bg-orange-600",
+    ))
 
 def EventDetails(event: Event):
     return Div(
