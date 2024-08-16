@@ -36,29 +36,23 @@ async def get(fname: str, ext: str):
     return FileResponse(f"/static/{fname}.{ext}")
 
 
-app.add_route("/", events_views.homeview)
-app.add_route("/calendar", events_views.calendar)
-app.add_route("/events", events_views.compact_list)
-app.add_route("/events/add-event", events_views.add_event_form)
-app.add_route("/events/add-event", events_views.add_event_handler, methods=["POST"])
-app.add_route("/event/{event_id}", events_views.event_detail)
-app.add_route("/edit-event/{event_id}", events_views.edit_event_form)
-app.add_route(
-    "/edit-event/{event_id}", events_views.edit_event_handler, methods=["POST"]
-)
-app.add_route("/event/copy/{event_id}", events_views.copy_event_form)
-app.add_route("/event/delete/{event_id}", events_views.delete_event, methods=["POST"])
+app.get("/")(events_views.home_view)
+app.get("/calendar/")(events_views.calendar)
+app.get("/events/")(events_views.list_view)
+app.get("/events/{event_id}/")(events_views.event_detail)
+app.get("/events/add-event/")(events_views.add_event_form)
+app.post("/events/add-event/")(events_views.add_event_handler)
+app.get("/events/edit-event/{event_id}/")(events_views.edit_event_form)
+app.post("/events/edit-event/{event_id}/")(events_views.edit_event_handler)
+app.get("/events/copy/{event_id}/")(events_views.copy_event_form)
+app.post("/events/delete/{event_id}/")(events_views.delete_event_handler)
 
-app.add_route("/venues", venues_views.index)
-app.add_route("/venues-list", venues_views.venues_list)
-app.add_route("/venues/add-venue", venues_views.add_venue_handler, methods=["POST"])
-app.add_route("/venues/edit/{venue_id}", venues_views.edit_venue_form)
-app.add_route(
-    "/venues/edit/{venue_id}", venues_views.edit_venue_handler, methods=["POST"]
-)
-app.add_route(
-    "/venues/delete/{venue_id}", venues_views.delete_venue_handler, methods=["POST"]
-)
+app.get("/venues/")(venues_views.index)
+app.get("/venues-list/")(venues_views.venues_list)
+app.post("/venues/add-venue/")(venues_views.add_venue_handler)
+app.get("/venues/edit/{venue_id}/")(venues_views.edit_venue_form)
+app.post("/venues/edit/{venue_id}/")(venues_views.edit_venue_handler)
+app.post("/venues/delete/{venue_id}/")(venues_views.delete_venue_handler)
 
 
 serve(port=5045)

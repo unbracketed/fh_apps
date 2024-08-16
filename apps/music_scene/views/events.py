@@ -1,18 +1,19 @@
-from fasthtml import Div, H1, Titled, fill_form
+from fasthtml.common import Div, Titled, fill_form, uri
 from starlette.requests import Request
 
 from apps.music_scene.components.events import (
     CompactEventList,
-    EventDetails, ViewActions,
+    EventDetails,
+    ViewActions,
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import MultiViewContainer
 from apps.music_scene.models import events, venues, Event
 
 
-def homeview(request: Request):
+def home_view(request: Request):
     upcoming_events = events(order_by="date")
-    event_list = Div(id="event-list", cls="bg-slate-50 border-2 border-slate-500")(
+    event_list = Div(id="view-panel", cls="bg-slate-50 border-2 border-slate-500")(
         *CompactEventList(upcoming_events),
     )
     if request.headers.get("hx-request"):
@@ -20,7 +21,7 @@ def homeview(request: Request):
     return MultiViewContainer("Events", ViewActions(), event_list)
 
 
-async def compact_list(request: Request):
+def list_view(request: Request):
     event_list = Div(cls="bg-slate-50 border-2 border-slate-500")(
         *CompactEventList(events(order_by="date"))
     )
@@ -37,7 +38,7 @@ def calendar(request: Request):
 
 
 def add_event_form():
-    return (Div(EventForm("/events/add-event", "Add Event")),)
+    return (Div(EventForm(uri("add_event_form"), "Add Event")),)
 
 
 def add_event_handler(
@@ -104,11 +105,11 @@ def edit_event_handler(
 def copy_event_form(event_id: int):
     src_event = events[event_id]
     form = EventForm(
-        "/events/add-event", f"Copy of {src_event.title}", event_id=event_id
+        uri("add_event_form"), f"Copy of {src_event.title}", event_id=event_id
     )
     return Div(fill_form(form, src_event))
 
 
-def delete_event(event_id: int):
+def delete_event_handler(event_id: int):
     events.delete(event_id)
     return Div(*CompactEventList(events(order_by="date")))

@@ -27,13 +27,41 @@ def name(self: Event) -> str:
 
 ## Explicitly Adding Routes
 
-Use the `app.add_route` method for registering view functions with routes.  This will use the internal 
+Use the `app.get` and `app.post` methods for registering view functions with routes.  This will use the internal 
 `RouteX` which adds the FastHTML handling for parameter mapping on the input and wrapping the output based on request type.
 
 ```python
-app.add_route("/", events_views.homeview)
-app.add_route("/calendar", events_views.calendar)
-app.add_route("/events", events_views.compact_list)
-app.add_route("/events/add-event", events_views.add_event_form)
+app.get("/")(homeview)
+app.get("/calendar")(calendar)
+app.get("/events")(compact_list)
+app.post("/events/add-event")(add_event_handler)
 ```
 
+Use `uri` to map a named route to its path:
+
+```python
+uri("homeview")
+uri("calendar")
+uri("edit-event", event_id=event.id)
+```
+
+Named routes can be passed to components as `get`/`post` arguments to specify the `hx_get` / `hx_post` values:
+
+```python
+Button(get="homeview")
+Button(post=uri("add_event_handler", event_id=event.id))
+```
+---
+
+To render raw HTML / unescaped output, use `NotStr` or `Safe`
+
+---
+
+Specify the condition for indicating the selected option to the `value` parameter for `Option`:
+
+```python
+Select(
+    *[Option(x[0], value=x[1]) for x in RARITIES],
+    id="rarity",
+),
+```

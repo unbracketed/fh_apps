@@ -1,4 +1,4 @@
-from fasthtml import Div, fill_form
+from fasthtml.common import Div, fill_form
 from starlette.requests import Request
 
 from apps.music_scene.components.layout import MultiViewContainer

@@ -1,6 +1,6 @@
 from datetime import datetime
 from fastcore.basics import patch
-from fasthtml.common import Card, P, Div, H2, A, H1, Script
+from fasthtml.common import Card, P, Div, H2, A, H1, uri
 
 from apps.music_scene.components.elements import SlimBtn
 from apps.music_scene.components.layout import Grid
@@ -42,11 +42,14 @@ def __ft__(self: Event):
 
 
 def ViewActions(**kwargs):
-    return Div(id="view-actions", **kwargs)(SlimBtn(
-        "Add Event",
-        "/events/add-event",
-        cls="text-white bg-orange-500 hover:bg-orange-600",
-    ))
+    return Div(id="view-actions", **kwargs)(
+        SlimBtn(
+            "Add Event",
+            uri("add_event_form"),
+            cls="text-white bg-orange-500 hover:bg-orange-600",
+        )
+    )
+
 
 def EventDetails(event: Event):
     return Div(
@@ -108,46 +111,31 @@ def CompactEventList(events, **kwargs):
                 Div(f"{_ts_full(event.start_time)}" if event.start_time else "-"),
                 Div(cls="col-span-2")(
                     A(
-                        id=f"edit-btn-{event.id}",
-                        href=f"/edit-event/{event.id}",
+                        href="#",
                         cls="underline hover:bg-rose-200 px-1",
-                        hx_get=f"/edit-event/{event.id}",
-                        hx_target=f"#event-edit-form-{event.id}",
-                        hx_swap="innerHTML",
+                        get=uri("edit_event_form", event_id=event.id),
+                        hx_target=f"#event-row-{event.id}",
                     )("Edit"),
                     A(
                         href=f"/event/{event.id}",
                         cls="underline hover:bg-blue-200 px-1",
                     )("View"),
                     A(
-                        id=f"copy-btn-{event.id}",
-                        href=f"/event/copy/{event.id}",
+                        href="#",
                         cls="underline hover:bg-red-300 px-1",
-                        hx_get=f"/event/copy/{event.id}",
-                        hx_target=f"#event-edit-form-{event.id}",
-                        hx_swap="innerHTML",
+                        get=uri("copy_event_form", event_id=event.id),
+                        hx_target=f"#event-row-{event.id}",
                     )("Copy"),
                     A(
-                        href=f"/event/delete/{event.id}",
+                        href="#",
                         cls="underline hover:bg-red-500 px-1",
-                        hx_post=f"/event/delete/{event.id}",
-                        hx_target="#event-list",
+                        post=uri("delete_event_handler", event_id=event.id),
+                        hx_target="#view-panel",
                         hx_confirm=f"Delete {event.name}?",
                     )("Del"),
                 ),
             ),
             Div(id=f"event-edit-form-{event.id}", cls="hidden"),
-            Script(
-                f"""
-                me('#edit-btn-{event.id}').on('click', ev => {{
-                    me('#event-row-{event.id}').classToggle('hidden');
-                    me('#event-edit-form-{event.id}').classToggle('hidden');
-                }});
-                me('#copy-btn-{event.id}').on('click', ev => {{
-                    me('#event-edit-form-{event.id}').classToggle('hidden');
-                }});
-            """
-            ),
         )
         for event in events
     ]

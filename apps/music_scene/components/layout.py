@@ -1,5 +1,5 @@
-from fasthtml import A
-from fasthtml.common import Div, H1, Title
+from fasthtml.common import A, Div, H1, Title, uri
+from starlette.requests import Request
 
 from apps.music_scene.components.elements import SlimBtn
 
@@ -94,18 +94,18 @@ def Grid(*args, cols=1, gap=6, responsive=True, **kwargs):
 def NavMenu(*args, **kwargs):
     btn = SlimBtn(
         "Events",
-        "/events",
+        uri("list_view"),
         cls="bg-lime-500 hover:bg-lime-600",
         hx_push_url="true",
     )
     venues_btn = SlimBtn(
         "Venues",
-        "/venues",
+        "index",
         cls="text-white bg-emerald-600 hover:bg-emerald-700",
         hx_push_url="true",
     )
     calendar_btn = SlimBtn(
-        "Calendar", "/calendar", cls="bg-slate-700 text-white", hx_push_url="true"
+        "Calendar", "calendar", cls="bg-slate-700 text-white", hx_push_url="true"
     )
     return Div(
         btn,
@@ -116,8 +116,6 @@ def NavMenu(*args, **kwargs):
         cls="mb-4",
         **kwargs,
     )
-
-
 
 
 def MultiViewContainer(title, view_actions, *args, **kwargs):
