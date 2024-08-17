@@ -18,11 +18,13 @@ from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn, SlimBtn
 
 
-def ViewActions():
-    return SlimBtn(
-        "Add Venue",
-        uri("add_venue_form"),
-        cls="bg-lime-300 hover:bg-lime-400",
+def ViewActions(**kwargs):
+    return Div(id="view-actions", **kwargs)(
+        SlimBtn(
+            "Add Venue",
+            uri("add_venue_form"),
+            cls="bg-lime-300 hover:bg-lime-400",
+        )
     )
 
 
@@ -50,16 +52,16 @@ def VenueRow(venue):
         Td(
             A(
                 "Edit",
-                href=f"/venues/edit/{venue.id}",
-                hx_get=f"/venues/edit/{venue.id}",
-                hx_target="#venue-list",
+                href="#",
+                get=uri("edit_venue_form", venue_id=venue.id),
+                hx_target="#view-panel",
                 cls="text-blue-500 hover:underline mr-2",
             ),
             A(
                 "Delete",
-                href=f"/venues/delete/{venue.id}",
-                hx_post=f"/venues/delete/{venue.id}",
-                hx_target="#venue-list",
+                href="#",
+                post=uri("delete_venue_handler", venue_id=venue.id),
+                hx_target="#view-panel",
                 hx_confirm="Are you sure you want to delete this venue?",
                 cls="text-red-500 hover:underline",
             ),
@@ -69,11 +71,10 @@ def VenueRow(venue):
 
 def VenueForm(action, submit_label="Submit", venue_id=None):
     return Form(
-        action=action,
         method="post",
         cls="space-y-4",
-        hx_post=action,
-        hx_target="#venue-list",
+        post=action,
+        hx_target="#view-panel",
         id=f"venue-form-{venue_id}",
     )(
         Grid(cols=2)(

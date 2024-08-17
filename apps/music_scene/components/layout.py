@@ -118,7 +118,7 @@ def NavMenu(*args, **kwargs):
     )
 
 
-def MultiViewContainer(title, view_actions, *args, **kwargs):
+def MultiViewContainer(title, view_actions, *children, **attrs):
     # if the first arg isn't a string, raise an exception
     if not isinstance(title, str):
         raise ValueError("First argument must be a string")
@@ -129,8 +129,7 @@ def MultiViewContainer(title, view_actions, *args, **kwargs):
                 H1(id="view-title", cls="text-3xl py-4")(f"Music Scene Manager")
             ),
             NavMenu(),
-            Div(id="view-actions")(view_actions),
-            Div(id="view-panel")(*args),
-            **kwargs,
+            Div(id="view-panel")(Div(id="view-actions")(view_actions), *children),
+            **attrs,
         ),
     )

@@ -117,8 +117,10 @@ def CompactEventList(events, **kwargs):
                         hx_target=f"#event-row-{event.id}",
                     )("Edit"),
                     A(
-                        href=f"/event/{event.id}",
+                        href="#",
                         cls="underline hover:bg-blue-200 px-1",
+                        get=uri("event_detail", event_id=event.id),
+                        hx_target=f"#event-row-{event.id}",
                     )("View"),
                     A(
                         href="#",

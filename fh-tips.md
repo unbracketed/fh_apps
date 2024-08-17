@@ -65,3 +65,14 @@ Select(
     id="rarity",
 ),
 ```
+
+---
+
+## Live Reloading
+
+To enable live reloading in FastHTML, you can use the `--reload` flag when running your application:
+`uvicorn app:app --reload`
+
+or 
+
+`fast_app(live=True)`

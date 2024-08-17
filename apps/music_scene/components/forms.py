@@ -17,10 +17,9 @@ def EventForm(action, form_heading="", submit_label="Save", event_id=None):
     )(
         H2(form_heading, cls="text-2xl mb-4") if form_heading else "",
         Form(
-            action=action,
             method="post",
             cls="space-y-4",
-            hx_post=action,
+            post=action,
             hx_target=f"#view-panel",
         )(
             Grid(cols=2)(
@@ -51,9 +50,8 @@ def EventForm(action, form_heading="", submit_label="Save", event_id=None):
             Button(
                 "Cancel",
                 cls="btn btn-secondary cancel-btn",
-            ),
-            Script(
-                f"""me(".cancel-btn").on("click", ev => me("#event-form-{event_id}").fadeOut() )"""
+                get="list_view",
+                hx_target="#view-panel",
             ),
         ),
     )

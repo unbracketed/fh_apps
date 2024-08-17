@@ -17,7 +17,7 @@ head_section = (
 
 
 exception_handlers = {
-    404: lambda req, exc: Titled("404: I don't exist!"),
+    404: lambda req, exc: Titled("404: I'm not exist!"),
     418: lambda req, exc: Titled("418: I'm a teapot!"),
     500: lambda req, exc: Titled("500: Hey who turned off the music?"),
 }
@@ -38,10 +38,10 @@ async def get(fname: str, ext: str):
 
 app.get("/")(events_views.home_view)
 app.get("/calendar/")(events_views.calendar)
-app.get("/events/")(events_views.list_view)
-app.get("/events/{event_id}/")(events_views.event_detail)
-app.get("/events/add-event/")(events_views.add_event_form)
-app.post("/events/add-event/")(events_views.add_event_handler)
+app.get("/events")(events_views.list_view)
+app.get("/events/detail/{event_id}")(events_views.event_detail)
+app.get("/events/add-event-form")(events_views.add_event_form)
+app.post("/events/add-event")(events_views.add_event_handler)
 app.get("/events/edit-event/{event_id}/")(events_views.edit_event_form)
 app.post("/events/edit-event/{event_id}/")(events_views.edit_event_handler)
 app.get("/events/copy/{event_id}/")(events_views.copy_event_form)
@@ -49,6 +49,7 @@ app.post("/events/delete/{event_id}/")(events_views.delete_event_handler)
 
 app.get("/venues/")(venues_views.index)
 app.get("/venues-list/")(venues_views.venues_list)
+app.get("/venues/add-venue/")(venues_views.add_venue_form)
 app.post("/venues/add-venue/")(venues_views.add_venue_handler)
 app.get("/venues/edit/{venue_id}/")(venues_views.edit_venue_form)
 app.post("/venues/edit/{venue_id}/")(venues_views.edit_venue_handler)

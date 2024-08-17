@@ -38,7 +38,7 @@ def calendar(request: Request):
 
 
 def add_event_form():
-    return (Div(EventForm(uri("add_event_form"), "Add Event")),)
+    return (Div(EventForm("add_event_handler", "Add Event")),)
 
 
 def add_event_handler(
@@ -73,7 +73,10 @@ def edit_event_form(event_id: int):
     event = events[event_id]
     venue_id = venues.lookup({"name": event.venue})
     setattr(event, "venue_id", venue_id)
-    form = EventForm(f"/edit-event/{event_id}", "Edit Event", event_id=event_id)
+    # action = req.url_for("edit_event_handler", event_id=event_id)
+    form = EventForm(
+        uri("edit_event_handler", event_id=event_id), "Edit Event", event_id=event_id
+    )
     return Div(cls="col-span-4")(fill_form(form, event))
 
 
