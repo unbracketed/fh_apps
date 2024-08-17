@@ -5,12 +5,12 @@ import apps.music_scene.views.events as events_views
 import apps.music_scene.views.venues as venues_views
 
 head_section = (
-    # Link(rel="preconnect", href="https://fonts.googleapis.com"),
-    # Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=True),
-    # Link(
-    #     rel="stylesheet",
-    #     href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Karla:ital,wght@0,200..800;1,200..800&display=swap",
-    # ),
+    Link(rel="preconnect", href="https://fonts.googleapis.com"),
+    Link(rel="preconnect", href="https://fonts.gstatic.com", crossorigin=True),
+    Link(
+        rel="stylesheet",
+        href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&family=Karla:ital,wght@0,200..800;1,200..800&display=swap",
+    ),
     Link(rel="stylesheet", href="/static/base.css"),
 )
 
@@ -39,6 +39,7 @@ async def get(fname: str, ext: str):
 app.get("/")(events_views.home_view)
 app.get("/calendar/")(events_views.calendar)
 app.get("/events")(events_views.list_view)
+app.get("/events/search")(events_views.search_events_handler)
 app.get("/events/detail/{event_id}")(events_views.event_detail)
 app.get("/events/add-event-form")(events_views.add_event_form)
 app.post("/events/add-event")(events_views.add_event_handler)

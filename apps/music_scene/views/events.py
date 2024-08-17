@@ -7,7 +7,7 @@ from apps.music_scene.components.events import (
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import StackedLayout
-from apps.music_scene.models import events, venues, Event
+from apps.music_scene.models import events, venues, Event, do_search
 
 
 def home_view(request: Request) -> FT:
@@ -110,3 +110,9 @@ def copy_event_form(event_id: int) -> FT:
 def delete_event_handler(event_id: int) -> FT:
     events.delete(event_id)
     return EventsTable(events(order_by="date"))
+
+
+def search_events_handler(request: Request) -> FT:
+    query = request.query_params["q"]
+    search_results = do_search(query)
+    return EventsTable(search_results)
