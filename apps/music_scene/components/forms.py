@@ -20,7 +20,7 @@ def EventForm(action, form_heading="", submit_label="Save", event_id=None):
             method="post",
             cls="space-y-4",
             post=action,
-            hx_target=f"#view-panel",
+            hx_target="#view-panel",
         )(
             Grid(cols=2)(
                 LabeledInput("Event Title", "title", required=True),

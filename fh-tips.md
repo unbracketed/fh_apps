@@ -76,3 +76,11 @@ To enable live reloading in FastHTML, you can use the `--reload` flag when runni
 or 
 
 `fast_app(live=True)`
+
+---
+
+## Named Route Mapping with HTMX verbs and targeting
+
+1. The new verb/target parameters (`get`, `post`, `put`, `patch`) expect an encoded named route string, which you can get by calling uri(route_name, **kwargs)
+2. `uri` creates an encoded named route string which FH uses to map to a url path; in practice one probably doesn't need to deal with these strings directly, but you can use `decode_uri` to split into route name and arguments
+3. If you need to, you can use `request.url_for(route_name, **kwargs)` to get a formatted path for the route.  An example might be adding this to a `<form action=...>`

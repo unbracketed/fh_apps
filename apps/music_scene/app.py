@@ -3,7 +3,6 @@ from starlette.responses import FileResponse
 
 import apps.music_scene.views.events as events_views
 import apps.music_scene.views.venues as venues_views
-from apps.music_scene.components.layout import StackedLayout
 
 head_section = (
     Link(rel="preconnect", href="https://fonts.googleapis.com"),
@@ -56,6 +55,5 @@ app.get("/venues/edit/{venue_id}/")(venues_views.edit_venue_form)
 app.post("/venues/edit/{venue_id}/")(venues_views.edit_venue_handler)
 app.post("/venues/delete/{venue_id}/")(venues_views.delete_venue_handler)
 
-app.get("/base")(StackedLayout)
 
 serve(port=5045)
