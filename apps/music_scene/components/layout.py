@@ -1,4 +1,5 @@
 from functools import lru_cache
+from typing import Tuple
 
 import fasthtml.svg as svg
 from fasthtml.common import (
@@ -477,9 +478,8 @@ def SL_Header(title):
     )
 
 
-def StackedLayout(active_view: str, *children, **attrs) -> FT:
-    return Div(cls="min-h-full")(
-        Title("Music Scene Manager"),
+def StackedLayout(active_view: str, *children, **attrs):
+    return Title("Music Scene Manager"), Div(cls="min-h-full")(
         SL_Nav(active_view),
         Container(
             Div(cls="py-10")(

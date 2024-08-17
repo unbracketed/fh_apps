@@ -1,4 +1,6 @@
-from fasthtml.common import Div, Titled, fill_form, uri, FT
+from typing import Tuple
+
+from fasthtml.common import Div, Titled, fill_form, uri, FT, Title
 from starlette.requests import Request
 
 from apps.music_scene.components.events import (
@@ -11,7 +13,7 @@ from apps.music_scene.components.layout import StackedLayout
 from apps.music_scene.models import events, venues, Event, do_search
 
 
-def home_view(request: Request) -> FT:
+def home_view(request: Request):
     upcoming_events = events(order_by="date")
     event_list = Div(EventsTable(upcoming_events))
     if request.headers.get("hx-request"):
@@ -19,14 +21,14 @@ def home_view(request: Request) -> FT:
     return StackedLayout("Dashboard", event_list)
 
 
-def list_view(request: Request) -> FT:
+def list_view(request: Request):
     event_list = Div(EventsTable(events(order_by="date")))
     if request.headers.get("hx-request"):
         return event_list
     return StackedLayout("Events", event_list)
 
 
-def calendar(request: Request) -> FT:
+def calendar(request: Request):
     events_list = Div(cls="mt-4 bg-slate-50")(*events(order_by="date"))
     if request.headers.get("hx-request"):
         return events_list

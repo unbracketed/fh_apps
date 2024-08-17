@@ -1,4 +1,6 @@
-from fasthtml.common import Div, fill_form, uri, FT
+from typing import Tuple
+
+from fasthtml.common import Div, fill_form, uri, FT, Title
 from starlette.requests import Request
 
 from apps.music_scene.components.layout import StackedLayout
@@ -6,7 +8,7 @@ from apps.music_scene.components.venues import VenueForm, VenuesTable
 from apps.music_scene.models import venues, Venue
 
 
-def index(request: Request) -> FT:
+def index(request: Request):
     venue_list = Div(id="venue-list")(
         VenuesTable(venues(order_by="name")),
     )
