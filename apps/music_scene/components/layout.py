@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 import fasthtml.svg as svg
 from fasthtml.common import (
     A,
@@ -290,7 +292,10 @@ def SL_Nav_Profile_Menu_Mobile():
     )
 
 
-def SL_Nav():
+@lru_cache(maxsize=4)
+def SL_Nav(active_view):
+    active = "inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+    inactive = "inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
     return (
         Nav(cls="border-b border-gray-200 bg-white")(
             Div(cls="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8")(
@@ -311,24 +316,24 @@ def SL_Nav():
                         Div(cls="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8")(
                             A(
                                 "Dashboard",
-                                href="#",
+                                href="/",
                                 aria_current="page",
-                                cls="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900",
+                                cls=active if active_view == "Dashboard" else inactive,
                             ),
                             A(
                                 "Events",
                                 href="/events/",
-                                cls="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                                cls=active if active_view == "Events" else inactive,
                             ),
                             A(
                                 "Venues",
                                 href="/venues/",
-                                cls="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                                cls=active if active_view == "Venues" else inactive,
                             ),
                             A(
                                 "Calendar",
                                 href="/calendar/",
-                                cls="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                                cls=active if active_view == "Calendar" else inactive,
                             ),
                         ),
                     ),
@@ -427,18 +432,16 @@ def SL_Header(title):
     )
 
 
-def StackedLayout(title: str, view_actions, *children, **attrs) -> FT:
+def StackedLayout(active_view: str, *children, **attrs) -> FT:
     return Div(cls="min-h-full")(
         Title("Music Scene Manager"),
-        SL_Nav(),
+        SL_Nav(active_view),
         Container(
             Div(cls="py-10")(
                 # Header(SL_Header(title)),
                 Main(
                     Div(cls="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8")(
-                        Div(id="view-panel")(
-                            Div(id="view-actions")(view_actions), *children
-                        )
+                        Div(id="view-panel")(*children)
                     ),
                     **attrs,
                 ),
