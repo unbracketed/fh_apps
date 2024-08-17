@@ -18,7 +18,7 @@ if __name__ == "__main__":
                 "url",
             ]
         )
-        for event in events(order_by="date"):
+        for event in events():
             writer.writerow(
                 [
                     event.id,
