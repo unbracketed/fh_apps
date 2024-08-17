@@ -2,13 +2,13 @@ from fasthtml.common import Div, fill_form, uri, FT
 from starlette.requests import Request
 
 from apps.music_scene.components.layout import StackedLayout
-from apps.music_scene.components.venues import VenueList, VenueForm
+from apps.music_scene.components.venues import VenueForm, VenuesTable
 from apps.music_scene.models import venues, Venue
 
 
 def index(request: Request) -> FT:
     venue_list = Div(id="venue-list")(
-        VenueList(venues(order_by="name")),
+        VenuesTable(venues(order_by="name")),
     )
     if request.headers.get("hx-request"):
         return venue_list
@@ -18,7 +18,7 @@ def index(request: Request) -> FT:
 def venues_list() -> FT:
     all_venues = venues(order_by="name")
     return Div(id="venue-list")(
-        VenueList(all_venues),
+        VenuesTable(all_venues),
     )
 
 
@@ -41,7 +41,7 @@ def add_venue_handler(
         description=description,
     )
     venues.insert(new_venue)
-    return VenueList(venues(order_by="name"))
+    return VenuesTable(venues(order_by="name"))
 
 
 def add_venue_form() -> FT:
@@ -77,9 +77,9 @@ def edit_venue_handler(
         description=description,
     )
     venues.update(updated_venue)
-    return VenueList(venues(order_by="name"))
+    return VenuesTable(venues(order_by="name"))
 
 
 def delete_venue_handler(venue_id: int) -> FT:
     venues.delete(venue_id)
-    return VenueList(venues(order_by="name"))
+    return VenuesTable(venues(order_by="name"))

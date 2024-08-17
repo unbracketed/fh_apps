@@ -2,7 +2,6 @@ from fasthtml.common import Div, Titled, fill_form, uri, FT
 from starlette.requests import Request
 
 from apps.music_scene.components.events import (
-    CompactEventList,
     EventDetails,
     EventsTable,
 )
@@ -57,7 +56,7 @@ def add_event_handler(
         description=description,
     )
     events.insert(new_event)
-    return Div(*CompactEventList(events(order_by="date")))
+    return EventsTable(events(order_by="date"))
 
 
 def event_detail(event_id: int) -> FT:
@@ -97,7 +96,7 @@ def edit_event_handler(
         description=description,
     )
     events.update(updated_event)
-    return Div(*CompactEventList(events(order_by="date")))
+    return EventsTable(events(order_by="date"))
 
 
 def copy_event_form(event_id: int) -> FT:
@@ -110,4 +109,4 @@ def copy_event_form(event_id: int) -> FT:
 
 def delete_event_handler(event_id: int) -> FT:
     events.delete(event_id)
-    return Div(*CompactEventList(events(order_by="date")))
+    return EventsTable(events(order_by="date"))

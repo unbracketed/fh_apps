@@ -189,15 +189,22 @@ def EventRow(event: Event, **kwargs):
                 href="#",
                 cls="text-indigo-600 hover:text-indigo-900",
                 get=uri("copy_event_form", event_id=event.id),
-                hx_target=f"#events-table",
+                hx_target="#events-table",
             )("Copy", Span(f", {event.title}", cls="sr-only")),
+            A(
+                href="#",
+                cls="underline hover:bg-red-500 px-1",
+                post=uri("delete_event_handler", event_id=event.id),
+                hx_target="#events-table",
+                hx_confirm=f"Delete {event.name}?",
+            )("Delete"),
         ),
     )
 
 
 def EventsTable(events, **kwargs):
     rows = [EventRow(event) for event in events]
-    return Div(cls="px-4 sm:px-6 lg:px-8")(
+    return Div(id="events-table", cls="px-4 sm:px-6 lg:px-8")(
         Div(cls="sm:flex sm:items-center")(
             Div(cls="sm:flex-auto")(
                 H1("Events", cls="text-base font-semibold leading-6 text-gray-900"),
@@ -213,7 +220,7 @@ def EventsTable(events, **kwargs):
                 )
             ),
         ),
-        Div(id="events-table", cls="-mx-4 mt-8 sm:-mx-0")(
+        Div(cls="-mx-4 mt-8 sm:-mx-0")(
             Table(cls="min-w-full divide-y divide-gray-300")(
                 Thead(
                     Tr(
