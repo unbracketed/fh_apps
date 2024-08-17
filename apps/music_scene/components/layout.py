@@ -301,7 +301,8 @@ def SL_Nav(active_view):
             Div(cls="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8")(
                 Div(cls="flex h-16 justify-between")(
                     Div(cls="flex")(
-                        Div(cls="flex flex-shrink-0 items-center")(
+
+                        COMMENT(Div(cls="flex flex-shrink-0 items-center")(
                             Img(
                                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600",
                                 alt="Your Company",
@@ -312,7 +313,9 @@ def SL_Nav(active_view):
                                 alt="Your Company",
                                 cls="hidden h-8 w-auto lg:block",
                             ),
-                        ),
+                        )),
+
+
                         Div(cls="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8")(
                             A(
                                 "Dashboard",
