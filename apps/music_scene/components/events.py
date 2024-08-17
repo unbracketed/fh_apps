@@ -21,7 +21,7 @@ from fasthtml.common import (
     Button,
 )
 
-from apps.music_scene.components.layout import Grid
+from apps.music_scene.components.layout import Grid, JustifiedSearchInput
 from apps.music_scene.models import Event
 
 
@@ -202,14 +202,21 @@ def EventRow(event: Event, **kwargs):
     )
 
 
-def EventsTable(events, **kwargs):
+def EventsTableBody(events):
     rows = [EventRow(event) for event in events]
+    return (
+        Tbody(id="events-table-body", cls="divide-y divide-gray-200 bg-white")(*rows),
+    )
+
+
+def EventsTable(events, **kwargs):
     return Div(id="events-table", cls="px-4 sm:px-6 lg:px-8")(
         Div(cls="sm:flex sm:items-center")(
             Div(cls="sm:flex-auto")(
                 H1("Events", cls="text-base font-semibold leading-6 text-gray-900"),
                 P("A list of all the events.", cls="mt-2 text-sm text-gray-700"),
             ),
+            JustifiedSearchInput("events"),
             Div(cls="mt-4 sm:ml-16 sm:mt-0 sm:flex-none")(
                 Button(
                     "Add event",
@@ -249,7 +256,7 @@ def EventsTable(events, **kwargs):
                         ),
                     )
                 ),
-                Tbody(cls="divide-y divide-gray-200 bg-white")(*rows),
+                EventsTableBody(events),
             )
         ),
     )

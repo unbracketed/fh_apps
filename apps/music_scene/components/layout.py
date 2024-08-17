@@ -294,6 +294,46 @@ def SL_Nav_Profile_Menu_Mobile():
     )
 
 
+def SearchInput(label: str) -> FT:
+    return Div(cls="w-full max-w-lg lg:max-w-xs")(
+        Label(f"Search {label}", fr=f"search-{label}", cls="sr-only"),
+        Div(cls="relative")(
+            Div(
+                cls="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+            )(
+                Svg(
+                    viewbox="0 0 20 20",
+                    fill="currentColor",
+                    aria_hidden="true",
+                    cls="h-5 w-5 text-gray-400",
+                )(
+                    svg.Path(
+                        fill_rule="evenodd",
+                        d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z",
+                        clip_rule="evenodd",
+                    )
+                )
+            ),
+            Input(
+                id=f"search-{label}",
+                placeholder=f"Search {label}",
+                type="search",
+                post=uri(f"search_{label}_handler"),
+                hx_trigger=f"input changed delay:500ms, search-{label}",
+                hx_target="#events-table-body",
+                hx_swap="outerHTML",
+                cls="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
+            ),
+        ),
+    )
+
+
+def JustifiedSearchInput(label: str) -> FT:
+    return Div(
+        cls="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end"
+    )(SearchInput(label))
+
+
 @lru_cache(maxsize=4)
 def SL_Nav(active_view):
     active = "inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
@@ -341,40 +381,7 @@ def SL_Nav(active_view):
                             ),
                         ),
                     ),
-                    Div(
-                        cls="flex flex-1 items-center justify-center px-2 lg:ml-6 lg:justify-end"
-                    )(
-                        Div(cls="w-full max-w-lg lg:max-w-xs")(
-                            Label("Search", fr="search", cls="sr-only"),
-                            Div(cls="relative")(
-                                Div(
-                                    cls="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                                )(
-                                    Svg(
-                                        viewbox="0 0 20 20",
-                                        fill="currentColor",
-                                        aria_hidden="true",
-                                        cls="h-5 w-5 text-gray-400",
-                                    )(
-                                        svg.Path(
-                                            fill_rule="evenodd",
-                                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z",
-                                            clip_rule="evenodd",
-                                        )
-                                    )
-                                ),
-                                Input(
-                                    id="search",
-                                    placeholder="Search",
-                                    type="search",
-                                    post=uri("search_events_handler"),
-                                    hx_trigger="input changed delay:500ms, search",
-                                    hx_target="#events-table",
-                                    cls="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6",
-                                ),
-                            ),
-                        )
-                    ),
+                    # JustifiedSearchInput(),
                     SL_Nav_Profile_Menu(),
                     Div(cls="-mr-2 flex items-center sm:hidden")(
                         Button(

@@ -17,7 +17,7 @@ events_schema = dict(
 )
 
 
-db = database("music_scene.db")
+db = database("/Users/brian/code/fh_apps/apps/music_scene/music_scene.db")
 # db.register_fts4_bm25()
 
 events = db.t.events

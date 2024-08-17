@@ -4,6 +4,7 @@ from starlette.requests import Request
 from apps.music_scene.components.events import (
     EventDetails,
     EventsTable,
+    EventsTableBody,
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import StackedLayout
@@ -117,6 +118,6 @@ async def search_events_handler(request: Request) -> FT:
         query = request.query_params["q"]
     elif request.method == "POST":
         form_data = await request.form()
-        query = form_data.get("search")
+        query = form_data.get("search-events")
     search_results = do_search(query)
-    return EventsTable(search_results)
+    return EventsTableBody(search_results)
