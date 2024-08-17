@@ -1,7 +1,7 @@
 from fasthtml.common import Div, fill_form, uri
 from starlette.requests import Request
 
-from apps.music_scene.components.layout import MultiViewContainer
+from apps.music_scene.components.layout import StackedLayout
 from apps.music_scene.components.venues import VenueList, VenueForm, ViewActions
 from apps.music_scene.models import venues, Venue
 
@@ -13,7 +13,7 @@ def index(request: Request):
     # check the request headers for 'hx-request'
     if request.headers.get("hx-request"):
         return ViewActions(hx_oob_swap="true"), venue_list
-    return MultiViewContainer("Venues", ViewActions(), venue_list)
+    return StackedLayout("Venues", ViewActions(), venue_list)
 
 
 def venues_list():

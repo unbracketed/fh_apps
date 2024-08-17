@@ -7,12 +7,14 @@ module.exports = {
     "./apps/**/views/**/*.py"
   ],
   theme: {
+    /*
     extend: {
       fontFamily: {
         'sans': ['Karla', 'sans-serif'],
         'heading': ['Inconsolata', 'sans-serif'],
       },
     },
+    */
   },
   plugins: [require('@tailwindcss/forms'),],
 }
