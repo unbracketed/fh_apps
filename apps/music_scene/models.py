@@ -68,8 +68,6 @@ def do_search(query: str) -> List[Event]:
             "title LIKE ? OR artist LIKE ?", [f"%{query}%", f"%{query}%"]
         )
     ]
-    # return list(db.query("""select * from [events] where [title] LIKE :query""", {"query": f"%{query}%"}))
-    # return [Event(**row) for row in (db.query("""select * from [events] where [title] LIKE :query""", dict(query=f"%{query}%")))]
 
 
 venues_schema = dict(

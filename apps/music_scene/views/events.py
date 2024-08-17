@@ -112,7 +112,11 @@ def delete_event_handler(event_id: int) -> FT:
     return EventsTable(events(order_by="date"))
 
 
-def search_events_handler(request: Request) -> FT:
-    query = request.query_params["q"]
+async def search_events_handler(request: Request) -> FT:
+    if request.method == "GET":
+        query = request.query_params["q"]
+    elif request.method == "POST":
+        form_data = await request.form()
+        query = form_data.get("search")
     search_results = do_search(query)
     return EventsTable(search_results)
