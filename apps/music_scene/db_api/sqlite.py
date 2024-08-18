@@ -4,7 +4,7 @@ from typing import List
 from sqlite_utils import Database
 from sqlite_utils.db import NotFoundError
 
-from apps.music_scene.models import Venue, Event, venue_schema, event_schema
+from apps.music_scene.models import Venue, Event  # , venue_schema, event_schema
 
 DB_URL = "/Users/brian/code/fh_apps/apps/music_scene/music_scene_with_api.db"
 EVENTS_TABLE = "events"
@@ -13,6 +13,35 @@ VENUES_TABLE = "venues"
 
 def tracer(sql, params):
     print("SQL: {} - params: {}".format(sql, params))
+
+
+# from dataclasses import dataclass, make_dataclass
+
+venue_schema = dict(
+    id=int,
+    name=str,
+    address=str,
+    city=str,
+    state=str,
+    zip_code=str,
+    website=str,
+    description=str,
+)
+
+Venue = make_dataclass("Venue", venue_schema.items())
+
+event_schema = dict(
+    id=int,
+    title=str,
+    artist=str,
+    date=str,
+    start_time=str,
+    venue_id=int,
+    description=str,
+    url=str,
+    is_featured=bool,
+)
+Event = make_dataclass("Event", event_schema.items())
 
 
 def init_db(db):
