@@ -1,7 +1,8 @@
 from typing import Sequence
-from datetime import date
+
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import make_transient
-from sqlmodel import SQLModel, create_engine, select, Session, col, or_
+from sqlmodel import SQLModel, create_engine, select, Session, col, or_, func
 
 from apps.music_scene.models import Event
 
@@ -33,11 +34,14 @@ def list_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
         ).fetchall()
 
 
-def upcoming_events() -> Sequence[Event]:
+def upcoming_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
     with Session(get_db()) as session:
-        today = date.today().isoformat()
         return session.exec(
-            select(Event).where(Event.date >= today).order_by(Event.date)
+            select(Event)
+            .where(Event.date >= func.date("now"))
+            .order_by(Event.date)
+            .offset(skip)
+            .limit(limit)
         ).fetchall()
 
 
@@ -48,18 +52,22 @@ def create_event(
     start_time: str = None,
     venue_id: int = None,
 ) -> Event:
-    with Session(get_db()) as session:
-        event = Event(
-            title=title,
-            date=date,
-            artist=artist,
-            start_time=start_time,
-            venue_id=venue_id,
-        )
-        session.add(event)
-        session.commit()
-        session.refresh(event)
-        return event
+    try:
+        with Session(get_db()) as session:
+            event = Event(
+                title=title,
+                date=date,
+                artist=artist,
+                start_time=start_time,
+                venue_id=venue_id,
+            )
+            session.add(event)
+            session.commit()
+            session.refresh(event)
+            return event
+    except SQLAlchemyError as e:
+        # Log the error here if you have logging set up
+        raise ValueError(f"Failed to create event: {str(e)}")
 
 
 def update_event(event: Event) -> Event:
@@ -100,8 +108,14 @@ def search_events(query: str, skip: int = 0, limit: int = 100) -> Sequence[Event
         ).fetchall()
 
 
-def get_events_by_venue(venue_id: int) -> Sequence[Event]:
+def get_events_by_venue(
+    venue_id: int, skip: int = 0, limit: int = 100
+) -> Sequence[Event]:
     with Session(get_db()) as session:
         return session.exec(
-            select(Event).where(Event.venue_id == venue_id).order_by(Event.date)
+            select(Event)
+            .where(Event.venue_id == venue_id)
+            .order_by(Event.date)
+            .offset(skip)
+            .limit(limit)
         ).fetchall()
