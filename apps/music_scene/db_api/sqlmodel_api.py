@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from sqlmodel import SQLModel, create_engine, select, Session, col
+from sqlmodel import SQLModel, create_engine, select, Session, col, or_
 
 from apps.music_scene.models import Event
 
@@ -68,5 +68,12 @@ def delete_event(event: Event) -> bool:
 
 def search_events(query: str) -> Sequence[Event]:
     with Session(get_db()) as session:
-        query = session.exec(select(Event).where(col(Event.title).icontains(query)))
+        query = session.exec(
+            select(Event).where(
+                or_(
+                    col(Event.title).icontains(query),
+                    col(Event.artist).icontains(query),
+                )
+            )
+        )
         return query.fetchall()
