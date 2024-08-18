@@ -3,7 +3,7 @@ from starlette.requests import Request
 
 from apps.music_scene.components.layout import StackedLayout
 from apps.music_scene.components.venues import VenueForm, VenuesTable
-from apps.music_scene.models import venues, Venue
+from apps.music_scene.models import Venue
 
 
 def index(request: Request):

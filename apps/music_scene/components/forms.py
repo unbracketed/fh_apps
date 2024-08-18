@@ -1,14 +1,14 @@
 from fasthtml.common import *
 from apps.music_scene.components.layout import Grid
 from apps.music_scene.components.elements import SubmitBtn
-from apps.music_scene.models import venues, events
+from apps.music_scene.db_api import list_venues, get_event
 
 
 def EventForm(action, form_heading="", submit_label="Save", event_id=None):
-    all_venues = venues(order_by="name")
+    all_venues = list_venues()
     selected_venue_id = None
     if event_id:
-        event = events[event_id]
+        event = get_event(event_id)
         if event.venue:
             selected_venue_id = venues.lookup({"name": event.venue})
     return Div(

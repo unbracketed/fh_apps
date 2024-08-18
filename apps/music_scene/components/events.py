@@ -172,11 +172,13 @@ def EventRow(event: Event, **kwargs):
                 Dt("Title", cls="sr-only"),
                 Dd(event.artist, cls="mt-1 truncate text-gray-700"),
                 Dt("Venue", cls="sr-only sm:hidden"),
-                Dd(event.venue, cls="mt-1 truncate text-gray-500 sm:hidden"),
+                Dd(event.venue.name, cls="mt-1 truncate text-gray-500 sm:hidden"),
             ),
         ),
         Td(event.artist, cls="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"),
-        Td(event.venue, cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"),
+        Td(
+            event.venue.name, cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"
+        ),
         Td(_ds_short(event.date), cls="px-3 py-4 text-sm text-gray-500"),
         Td(
             _ts_full(event.start_time) if event.start_time else "",

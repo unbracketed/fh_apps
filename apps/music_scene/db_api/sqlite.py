@@ -1,8 +1,10 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, make_dataclass
 from typing import List
 
 from sqlite_utils import Database
 from sqlite_utils.db import NotFoundError
+
+from apps.music_scene.models import Venue, Event, venue_schema, event_schema
 
 DB_URL = "/Users/brian/code/fh_apps/apps/music_scene/music_scene_with_api.db"
 EVENTS_TABLE = "events"
@@ -13,42 +15,17 @@ def tracer(sql, params):
     print("SQL: {} - params: {}".format(sql, params))
 
 
-db = Database(DB_URL, tracer=tracer)
-
-
-@dataclass
-class Venue:
-    id: int
-    name: str
-    address: str
-    city: str
-    state: str
-    zip_code: str
-    website: str
-    description: str
-
-
-@dataclass
-class Event:
-    id: int
-    title: str
-    artist: str
-    date: str
-    start_time: str
-    venue_id: str
-    description: str
-    url: str
-    is_featured: bool
-
-
-def init_db():
-    db[VENUES_TABLE].create(asdict(Venue), if_not_exists=True, not_null=["name"])
+def init_db(db):
+    db[VENUES_TABLE].create(
+        venue_schema, pk="id", if_not_exists=True, not_null=["name"]
+    )
 
     db[EVENTS_TABLE].create(
-        asdict(Event),
+        event_schema,
         pk="id",
         if_not_exists=True,
         not_null={"title", "date"},
+        foreign_keys=[("venue_id", "venues")],
         defaults={"is_featured": False},
     )
     return db
@@ -59,7 +36,7 @@ def get_db():
 
 
 def get_events_table():
-    return db[EVENTS_TABLE]
+    return get_db()[EVENTS_TABLE]
 
 
 def get_event(event_id: int) -> Event | None:
@@ -70,9 +47,62 @@ def get_event(event_id: int) -> Event | None:
         return None
 
 
-def list_events() -> List[Event]:
+def list_events(join_venues=False) -> List[Event]:
+    Venue = make_dataclass("Venue", [("name", str), ("city", str), ("state", str)])
+    Event = make_dataclass(
+        "Event",
+        [
+            ("id", int),
+            ("title", int),
+            ("artist", str),
+            ("date", str),
+            ("start_time", str),
+            ("venue", Venue),
+            ("name", str),
+        ],
+    )
+
+    if join_venues:
+        join_venues_sql = """
+            SELECT
+                e.id,
+                e.title,
+                e.artist,
+                e.date,
+                e.start_time,
+                v.name AS venue_name,
+                v.city AS venue_city,
+                v.state AS venue_state
+            FROM
+                events e
+            LEFT JOIN
+                venues v ON e.venue_id = v.id
+        """
+        prepped_events = []
+        rows = get_db().query(join_venues_sql)
+        for row in rows:
+            venue_name = row.pop("venue_name")
+            venue_city = row.pop("venue_city")
+            venue_state = row.pop("venue_state")
+            if venue_name:
+                _venue = Venue(name=venue_name, city=venue_city, state=venue_state)
+                row["venue"] = _venue
+            else:
+                row["venue"] = None
+            row["name"] = (
+                f"{row['title']} - {row['artist']}" if row["artist"] else row["title"]
+            )
+            prepped_events.append(Event(**row))
+            return prepped_events
+
     events_table = get_events_table()
     return [Event(**row) for row in events_table.rows]
+
+
+def upcoming_events() -> List[Event]:
+    events_table = get_events_table()
+    # TODO need to add date comparison to rows_where
+    return [Event(**row) for row in events_table.rows_where(order_by="date")]
 
 
 def create_event(
@@ -130,7 +160,7 @@ def search_events(query: str) -> List[Event]:
 
 
 def get_venues_table():
-    return db[VENUES_TABLE]
+    return get_db()[VENUES_TABLE]
 
 
 def get_venue(venue_id: int) -> Venue | None:

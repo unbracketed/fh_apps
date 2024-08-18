@@ -8,26 +8,28 @@ from apps.music_scene.components.events import (
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import StackedLayout
-from apps.music_scene.models import events, venues, Event, do_search
+from apps.music_scene.models import Event
+from apps.music_scene.db_api import upcoming_events, list_events
 
 
 def home_view(request: Request):
-    upcoming_events = events(order_by="date")
-    event_list = Div(EventsTable(upcoming_events))
+    # TODO use upcoming
+    events = list_events(join_venues=True)
+    event_list = Div(EventsTable(events))
     if request.headers.get("hx-request"):
         return event_list
     return StackedLayout("Dashboard", event_list)
 
 
 def list_view(request: Request):
-    event_list = Div(EventsTable(events(order_by="date")))
+    event_list = Div(EventsTable(list_events(join_venues=True)))
     if request.headers.get("hx-request"):
         return event_list
     return StackedLayout("Events", event_list)
 
 
 def calendar(request: Request):
-    events_list = Div(cls="mt-4 bg-slate-50")(*events(order_by="date"))
+    events_list = Div(cls="mt-4 bg-slate-50")(*upcoming_events())
     if request.headers.get("hx-request"):
         return events_list
     return StackedLayout("Calendar", events_list)
