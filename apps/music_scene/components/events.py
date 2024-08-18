@@ -1,9 +1,5 @@
-from datetime import datetime
-from fastcore.basics import patch
 from fasthtml.common import (
-    Card,
     Div,
-    H2,
     A,
     uri,
     Table,
@@ -23,40 +19,7 @@ from fasthtml.common import (
 
 from apps.music_scene.components.layout import Grid, JustifiedSearchInput
 from apps.music_scene.models import Event
-
-
-def _ds_full(date_str):
-    """Convert a date string like '2024-03-14' to string like 'Thursday, March 14, 2024'"""
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    return date_obj.strftime("%A, %B %d, %Y")
-
-
-def _ds_short(date_str):
-    """Convert a date string like '2024-03-14' to string like 'March 14'"""
-    date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-    return date_obj.strftime("%B %d")
-
-
-def _ts_full(time_str):
-    """Convert a time string like '20:00' or '20:15'
-    to a friendly local time like '8PM' or '8:15PM'."""
-    time_obj = datetime.strptime(time_str, "%H:%M")
-
-    if time_obj.minute != 0:
-        # If minute is non-zero, include it in the format.
-        return time_obj.strftime("%I:%M %p").lstrip("0")
-    else:
-        # If minute is zero, only include hour in the format.
-        return time_obj.strftime("%I %p").lstrip("0")
-
-
-@patch
-def __ft__(self: Event):
-    return Card(cls="mb-4 p-4 border rounded bg-slate-700 text-white")(
-        H2(self.name, cls="text-xl font-semibold"),
-        P(f"Date: {_ds_full(self.date)}", cls="text-sm"),
-        P(f"Venue: {self.venue}", cls="text-sm") if self.venue else "",
-    )
+from apps.music_scene.utils import _ds_full, _ds_short, _ts_full
 
 
 def ViewActions(**kwargs):
@@ -184,7 +147,8 @@ def EventRow(event: Event, **kwargs):
         ),
         Td(event.artist, cls="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"),
         Td(
-            event.venue.name if event.venue else "", cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"
+            event.venue.name if event.venue else "",
+            cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell",
         ),
         Td(_ds_short(event.date), cls="px-3 py-4 text-sm text-gray-500"),
         Td(

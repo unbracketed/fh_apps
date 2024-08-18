@@ -3,12 +3,19 @@ from starlette.requests import Request
 
 from apps.music_scene.components.layout import StackedLayout
 from apps.music_scene.components.venues import VenueForm, VenuesTable
+from apps.music_scene.db_api import (
+    list_venues,
+    create_venue,
+    get_venue,
+    update_venue,
+    delete_venue,
+)
 from apps.music_scene.models import Venue
 
 
 def index(request: Request):
     venue_list = Div(id="venue-list")(
-        VenuesTable(venues(order_by="name")),
+        VenuesTable(list_venues()),
     )
     if request.headers.get("hx-request"):
         return venue_list
@@ -16,7 +23,7 @@ def index(request: Request):
 
 
 def venues_list() -> FT:
-    all_venues = venues(order_by="name")
+    all_venues = list_venues()
     return Div(id="venue-list")(
         VenuesTable(all_venues),
     )
@@ -40,8 +47,8 @@ def add_venue_handler(
         website=website,
         description=description,
     )
-    venues.insert(new_venue)
-    return VenuesTable(venues(order_by="name"))
+    create_venue(**new_venue)
+    return VenuesTable(list_venues())
 
 
 def add_venue_form() -> FT:
@@ -51,7 +58,7 @@ def add_venue_form() -> FT:
 
 
 def edit_venue_form(venue_id: int) -> FT:
-    venue = venues[venue_id]
+    venue = get_venue(venue_id)
     form = VenueForm(uri("edit_venue_handler", venue_id=venue_id), "Save", venue_id)
     return Div(cls="col-span-4")(fill_form(form, venue))
 
@@ -66,8 +73,7 @@ def edit_venue_handler(
     website: str,
     description: str,
 ) -> FT:
-    updated_venue = Venue(
-        id=venue_id,
+    updated_venue = dict(
         name=name,
         address=address,
         city=city,
@@ -76,10 +82,10 @@ def edit_venue_handler(
         website=website,
         description=description,
     )
-    venues.update(updated_venue)
-    return VenuesTable(venues(order_by="name"))
+    update_venue(venue_id, **updated_venue)
+    return VenuesTable(list_venues())
 
 
 def delete_venue_handler(venue_id: int) -> FT:
-    venues.delete(venue_id)
-    return VenuesTable(venues(order_by="name"))
+    delete_venue(venue_id)
+    return VenuesTable(list_venues())

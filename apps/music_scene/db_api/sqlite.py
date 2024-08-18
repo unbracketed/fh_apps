@@ -49,7 +49,7 @@ def get_event(event_id: int) -> Event | None:
 
 def list_events(join_venues=False) -> List[Event]:
     Venue = make_dataclass("Venue", [("name", str), ("city", str), ("state", str)])
-    Event = make_dataclass(
+    FullEvent = make_dataclass(
         "Event",
         [
             ("id", int),
@@ -92,7 +92,7 @@ def list_events(join_venues=False) -> List[Event]:
             row["name"] = (
                 f"{row['title']} - {row['artist']}" if row["artist"] else row["title"]
             )
-            prepped_events.append(Event(**row))
+            prepped_events.append(FullEvent(**row))
         return prepped_events
 
     events_table = get_events_table()
@@ -149,14 +149,62 @@ def delete_event(event_id: int) -> bool:
     return True
 
 
-def search_events(query: str) -> List[Event]:
-    events_table = get_events_table()
-    return [
-        Event(**row)
-        for row in events_table.rows_where(
-            "title LIKE ? OR artist LIKE ?", [f"%{query}%", f"%{query}%"]
-        )
-    ]
+def search_events(query: str, join_venues=False) -> List[Event]:
+    Venue = make_dataclass("Venue", [("name", str), ("city", str), ("state", str)])
+    Event = make_dataclass(
+        "Event",
+        [
+            ("id", int),
+            ("title", int),
+            ("artist", str),
+            ("date", str),
+            ("start_time", str),
+            ("venue", Venue),
+            ("name", str),
+        ],
+    )
+    if join_venues:
+        join_venues_sql = """
+                    SELECT
+                        e.id,
+                        e.title,
+                        e.artist,
+                        e.date,
+                        e.start_time,
+                        v.name AS venue_name,
+                        v.city AS venue_city,
+                        v.state AS venue_state
+                    FROM
+                        events e
+                    LEFT JOIN
+                        venues v ON e.venue_id = v.id
+                    WHERE
+                        e.title LIKE ? OR e.artist LIKE ?
+                """
+        prepped_events = []
+        rows = get_db().query(join_venues_sql, [f"%{query}%", f"%{query}%"])
+        for row in rows:
+            venue_name = row.pop("venue_name")
+            venue_city = row.pop("venue_city")
+            venue_state = row.pop("venue_state")
+            if venue_name:
+                _venue = Venue(name=venue_name, city=venue_city, state=venue_state)
+                row["venue"] = _venue
+            else:
+                row["venue"] = None
+            row["name"] = (
+                f"{row['title']} - {row['artist']}" if row["artist"] else row["title"]
+            )
+            prepped_events.append(Event(**row))
+        return prepped_events
+    else:
+        events_table = get_events_table()
+        return [
+            Event(**row)
+            for row in events_table.rows_where(
+                "title LIKE ? OR artist LIKE ?", [f"%{query}%", f"%{query}%"]
+            )
+        ]
 
 
 def get_venues_table():
@@ -195,8 +243,8 @@ def create_venue(
         website=website,
         description=description,
     )
-    venue_id = venues_table.insert(new_venue)
-    return get_venue(venue_id)
+    venues_table.insert(new_venue)
+    return True
 
 
 def update_venue(venue_id: int, **kwargs) -> Venue:

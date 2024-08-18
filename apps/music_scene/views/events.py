@@ -1,4 +1,4 @@
-from fasthtml.common import Div, Titled, fill_form, uri, FT
+from fasthtml.common import Div, Titled, fill_form, uri, FT, Card, H2, P
 from starlette.requests import Request
 
 from apps.music_scene.components.events import (
@@ -8,8 +8,16 @@ from apps.music_scene.components.events import (
 )
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import StackedLayout
-from apps.music_scene.models import Event
-from apps.music_scene.db_api import upcoming_events, list_events, create_event
+from apps.music_scene.db_api import (
+    upcoming_events,
+    list_events,
+    create_event,
+    get_event,
+    update_event,
+    delete_event,
+    search_events,
+)
+from apps.music_scene.utils import _ds_full
 
 
 def home_view(request: Request):
@@ -29,7 +37,17 @@ def list_view(request: Request):
 
 
 def calendar(request: Request):
-    events_list = Div(cls="mt-4 bg-slate-50")(*upcoming_events())
+    # TODO fix upcoming
+    calendar_items = []
+    for event in list_events(join_venues=True):
+        calendar_items.append(
+            Card(cls="mb-4 p-4 border rounded bg-slate-700 text-white")(
+                H2(event.name, cls="text-xl font-semibold"),
+                P(f"Date: {_ds_full(event.date)}", cls="text-sm"),
+                P(f"Venue: {event.venue.name}", cls="text-sm") if event.venue else "",
+            )
+        )
+    events_list = Div(cls="mt-4 bg-slate-50")(*calendar_items)
     if request.headers.get("hx-request"):
         return events_list
     return StackedLayout("Calendar", events_list)
@@ -62,14 +80,12 @@ def add_event_handler(
 
 
 def event_detail(event_id: int) -> FT:
-    event = events[event_id]
+    event = get_event(event_id)
     return Titled(f"Event: {event.title}", Div(EventDetails(event)))
 
 
 def edit_event_form(event_id: int) -> FT:
-    event = events[event_id]
-    venue_id = venues.lookup({"name": event.venue})
-    setattr(event, "venue_id", venue_id)
+    event = get_event(event_id)
     form = EventForm(
         uri("edit_event_handler", event_id=event_id), "Edit Event", event_id=event_id
     )
@@ -86,23 +102,22 @@ def edit_event_handler(
     venue_id: str,
     description: str,
 ) -> FT:
-    venue = venues[venue_id].name
-    updated_event = Event(
-        id=event_id,
+    updated_event = dict(
         title=title,
         artist=artist,
         date=date,
         start_time=start_time,
-        venue=venue,
-        url=url,
-        description=description,
+        venue_id=venue_id,
+        # url=url,
+        # description=description,
+        # is_featured=False
     )
-    events.update(updated_event)
-    return EventsTable(events(order_by="date"))
+    update_event(event_id, **updated_event)
+    return EventsTable(list_events(join_venues=True))
 
 
 def copy_event_form(event_id: int) -> FT:
-    src_event = events[event_id]
+    src_event = get_event(event_id)
     form = EventForm(
         uri("add_event_handler"), f"Copy of {src_event.title}", event_id=event_id
     )
@@ -110,8 +125,8 @@ def copy_event_form(event_id: int) -> FT:
 
 
 def delete_event_handler(event_id: int) -> FT:
-    events.delete(event_id)
-    return EventsTable(events(order_by="date"))
+    delete_event(event_id)
+    return EventsTable(list_events(join_venues=True))
 
 
 async def search_events_handler(request: Request) -> FT:
@@ -120,5 +135,5 @@ async def search_events_handler(request: Request) -> FT:
     elif request.method == "POST":
         form_data = await request.form()
         query = form_data.get("search-events")
-    search_results = do_search(query)
+    search_results = search_events(query, join_venues=True)
     return EventsTableBody(search_results)
