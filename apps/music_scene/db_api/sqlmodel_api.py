@@ -1,5 +1,6 @@
 from typing import Sequence
-
+from datetime import date
+from sqlalchemy.orm import make_transient
 from sqlmodel import SQLModel, create_engine, select, Session, col, or_
 
 from apps.music_scene.models import Event
@@ -17,18 +18,27 @@ def init_db():
     SQLModel.metadata.create_all(engine)
 
 
-def get_event(event_id: int) -> Event | None:
+def get_event(event_id: int) -> Event:
     with Session(get_db()) as session:
-        return session.exec(select(Event).where(Event.id == event_id)).one_or_none()
+        event = session.exec(select(Event).where(Event.id == event_id)).one_or_none()
+        if event is None:
+            raise ValueError(f"Event with id {event_id} not found")
+        return event
 
 
-def list_events() -> Sequence[Event]:
+def list_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
     with Session(get_db()) as session:
-        return session.exec(select(Event).order_by(Event.date)).fetchall()
+        return session.exec(
+            select(Event).order_by(Event.date).offset(skip).limit(limit)
+        ).fetchall()
 
 
 def upcoming_events() -> Sequence[Event]:
-    raise "TODO"
+    with Session(get_db()) as session:
+        today = date.today().isoformat()
+        return session.exec(
+            select(Event).where(Event.date >= today).order_by(Event.date)
+        ).fetchall()
 
 
 def create_event(
@@ -52,28 +62,46 @@ def create_event(
         return event
 
 
-def update_event(event: Event) -> Event | None:
+def update_event(event: Event) -> Event:
     with Session(get_db()) as session:
-        session.add(event)
+        # Detach the event from any previous session
+        make_transient(event)
+        # Merge the detached event with the current session
+        db_event = session.merge(event)
+        # Commit the changes
         session.commit()
-        session.refresh(event)
-        return event
+        # Refresh to ensure we have the latest data
+        session.refresh(db_event)
+        return db_event
 
 
 def delete_event(event: Event) -> bool:
     with Session(get_db()) as session:
-        session.delete(event)
+        db_event = session.exec(select(Event).where(Event.id == event.id)).one_or_none()
+        if db_event is None:
+            raise ValueError(f"Event with id {event.id} not found")
+        session.delete(db_event)
+        session.commit()
         return True
 
 
-def search_events(query: str) -> Sequence[Event]:
+def search_events(query: str, skip: int = 0, limit: int = 100) -> Sequence[Event]:
     with Session(get_db()) as session:
-        query = session.exec(
-            select(Event).where(
+        return session.exec(
+            select(Event)
+            .where(
                 or_(
                     col(Event.title).icontains(query),
                     col(Event.artist).icontains(query),
                 )
             )
-        )
-        return query.fetchall()
+            .offset(skip)
+            .limit(limit)
+        ).fetchall()
+
+
+def get_events_by_venue(venue_id: int) -> Sequence[Event]:
+    with Session(get_db()) as session:
+        return session.exec(
+            select(Event).where(Event.venue_id == venue_id).order_by(Event.date)
+        ).fetchall()
