@@ -1,10 +1,10 @@
 import csv
 
-from apps.music_scene.models import events
+from apps.music_scene.db_api import list_events
 
 
 if __name__ == "__main__":
-    with open("events.csv", "w", newline="") as file:
+    with open("api-events.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(
             [
@@ -13,12 +13,13 @@ if __name__ == "__main__":
                 "artist",
                 "date",
                 "start_time",
-                "venue",
+                "venue_id",
                 "description",
                 "url",
+                "is_featured",
             ]
         )
-        for event in events():
+        for event in list_events():
             writer.writerow(
                 [
                     event.id,
@@ -26,8 +27,9 @@ if __name__ == "__main__":
                     event.artist,
                     event.date,
                     event.start_time,
-                    event.venue,
+                    event.venue_id,
                     event.description,
                     event.url,
+                    event.is_featured,
                 ]
             )

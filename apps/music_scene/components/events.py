@@ -178,7 +178,10 @@ def EventRow(event: Event, **kwargs):
         Td(event.artist, cls="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"),
         Td(event.venue, cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"),
         Td(_ds_short(event.date), cls="px-3 py-4 text-sm text-gray-500"),
-        Td(_ts_full(event.start_time) if event.start_time else "",  cls="px-3 py-4 text-sm text-gray-500"),
+        Td(
+            _ts_full(event.start_time) if event.start_time else "",
+            cls="px-3 py-4 text-sm text-gray-500",
+        ),
         Td(cls="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0")(
             A(
                 href="#",

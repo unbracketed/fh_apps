@@ -1,6 +1,4 @@
-from typing import Tuple
-
-from fasthtml.common import Div, Titled, fill_form, uri, FT, Title
+from fasthtml.common import Div, Titled, fill_form, uri, FT
 from starlette.requests import Request
 
 from apps.music_scene.components.events import (
