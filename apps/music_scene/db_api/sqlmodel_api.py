@@ -4,7 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import make_transient
 from sqlmodel import SQLModel, create_engine, select, Session, col, or_, func
 
-from apps.music_scene.models import Event
+from apps.music_scene.models import Event, Venue
 
 DB_URL = "sqlite:///music_scene_with_sqlmodel.db"
 DEBUG = True
@@ -116,6 +116,95 @@ def get_events_by_venue(
             select(Event)
             .where(Event.venue_id == venue_id)
             .order_by(Event.date)
+            .offset(skip)
+            .limit(limit)
+        ).fetchall()
+
+
+def get_venue(venue_id: int) -> Venue:
+    with Session(get_db()) as session:
+        venue = session.exec(select(Venue).where(Venue.id == venue_id)).one_or_none()
+        if venue is None:
+            raise ValueError(f"Venue with id {venue_id} not found")
+        return venue
+
+
+def list_venues(skip: int = 0, limit: int = 100) -> Sequence[Venue]:
+    with Session(get_db()) as session:
+        return session.exec(
+            select(Venue).order_by(Venue.name).offset(skip).limit(limit)
+        ).fetchall()
+
+
+def create_venue(
+    name: str,
+    address: str = None,
+    city: str = None,
+    state: str = None,
+    zip_code: str = None,
+    website: str = None,
+    description: str = None,
+) -> Venue:
+    try:
+        with Session(get_db()) as session:
+            venue = Venue(
+                name=name,
+                address=address,
+                city=city,
+                state=state,
+                zip_code=zip_code,
+                website=website,
+                description=description,
+            )
+            session.add(venue)
+            session.commit()
+            session.refresh(venue)
+            return venue
+    except SQLAlchemyError as e:
+        raise ValueError(f"Failed to create venue: {str(e)}")
+
+
+def update_venue(venue: Venue) -> Venue:
+    with Session(get_db()) as session:
+        make_transient(venue)
+        db_venue = session.merge(venue)
+        session.commit()
+        session.refresh(db_venue)
+        return db_venue
+
+
+def delete_venue(venue: Venue) -> bool:
+    with Session(get_db()) as session:
+        db_venue = session.exec(select(Venue).where(Venue.id == venue.id)).one_or_none()
+        if db_venue is None:
+            raise ValueError(f"Venue with id {venue.id} not found")
+        session.delete(db_venue)
+        session.commit()
+        return True
+
+
+def search_venues(query: str, skip: int = 0, limit: int = 100) -> Sequence[Venue]:
+    with Session(get_db()) as session:
+        return session.exec(
+            select(Venue)
+            .where(
+                or_(
+                    col(Venue.name).icontains(query),
+                    col(Venue.city).icontains(query),
+                    col(Venue.state).icontains(query),
+                )
+            )
+            .offset(skip)
+            .limit(limit)
+        ).fetchall()
+
+
+def get_venues_by_city(city: str, skip: int = 0, limit: int = 100) -> Sequence[Venue]:
+    with Session(get_db()) as session:
+        return session.exec(
+            select(Venue)
+            .where(Venue.city == city)
+            .order_by(Venue.name)
             .offset(skip)
             .limit(limit)
         ).fetchall()

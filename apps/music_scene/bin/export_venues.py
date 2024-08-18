@@ -1,6 +1,6 @@
 import csv
 
-from apps.music_scene.db_api import list_venues
+from apps.music_scene.db_api.sqlmodel_api import list_venues
 
 if __name__ == "__main__":
     with open("api-venues.csv", "w", newline="") as file:
