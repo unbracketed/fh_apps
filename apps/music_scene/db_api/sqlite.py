@@ -18,14 +18,14 @@ db = Database(DB_URL, tracer=tracer)
 
 @dataclass
 class Venue:
-    id = int
-    name = str
-    address = str
-    city = str
-    state = str
-    zip_code = str
-    website = str
-    description = str
+    id: int
+    name: str
+    address: str
+    city: str
+    state: str
+    zip_code: str
+    website: str
+    description: str
 
 
 @dataclass
@@ -98,16 +98,18 @@ def update_event(
     venue_id: int = None,
 ) -> True:
     events_table = get_events_table()
-    events_table.update(
-        event_id,
-        dict(
-            title=title,
-            artist=artist,
-            date=date,
-            start_time=start_time,
-            venue_id=venue_id,
-        ),
-    )
+    update_cols = {}
+    if title:
+        update_cols["title"] = title
+    if artist:
+        update_cols["artist"] = artist
+    if date:
+        update_cols["date"] = date
+    if start_time:
+        update_cols["start_time"] = start_time
+    if venue_id:
+        update_cols["venue_id"] = venue_id
+    events_table.update(event_id, update_cols)
     return True
 
 

@@ -1,14 +1,15 @@
 from sqlite_utils.utils import rows_from_file
 
-from apps.music_scene.models import events, venues
+from apps.music_scene.db_api import get_venues_table
 
 if __name__ == "__main__":
-    rows, format = rows_from_file(open("venues.csv", "rb"))
+    venues_table = get_venues_table()
+    rows, format = rows_from_file(open("api-venues.csv", "rb"))
     for row in rows:
         row.pop("id")
 
         existing = list(
-            venues.rows_where(
+            venues_table.rows_where(
                 "name = ? and city = ? and state = ?",
                 [
                     row["name"],
@@ -18,6 +19,6 @@ if __name__ == "__main__":
             )
         )
         if not existing:
-            venues.insert(row)
+            venues_table.insert(row)
         else:
             print("skipping", row)

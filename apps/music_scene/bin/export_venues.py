@@ -1,9 +1,9 @@
 import csv
 
-from apps.music_scene.models import events, venues
+from apps.music_scene.db_api import list_venues
 
 if __name__ == "__main__":
-    with open("venues.csv", "w", newline="") as file:
+    with open("api-venues.csv", "w", newline="") as file:
         writer = csv.writer(file)
         writer.writerow(
             [
@@ -17,7 +17,7 @@ if __name__ == "__main__":
                 "description",
             ]
         )
-        for venue in venues():
+        for venue in list_venues():
             writer.writerow(
                 [
                     venue.id,
