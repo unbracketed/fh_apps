@@ -163,21 +163,28 @@ def CompactEventList(events, **kwargs):
 
 
 def EventRow(event: Event, **kwargs):
+    stacked_details_items = [
+        Dt("Title", cls="sr-only"),
+        Dd(event.artist, cls="mt-1 truncate text-gray-700"),
+    ]
+    if event.venue:
+        stacked_details_items.extend(
+            [
+                Dt("Venue", cls="sr-only sm:hidden"),
+                Dd(event.venue.name, cls="mt-1 truncate text-gray-500 sm:hidden"),
+            ]
+        )
+    stacked_details = Dl(cls="font-normal lg:hidden")(*stacked_details_items)
     return Tr(id=f"event-row-{event.id}")(
         Td(
             cls="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
         )(
             event.title,
-            Dl(cls="font-normal lg:hidden")(
-                Dt("Title", cls="sr-only"),
-                Dd(event.artist, cls="mt-1 truncate text-gray-700"),
-                Dt("Venue", cls="sr-only sm:hidden"),
-                Dd(event.venue.name, cls="mt-1 truncate text-gray-500 sm:hidden"),
-            ),
+            stacked_details,
         ),
         Td(event.artist, cls="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell"),
         Td(
-            event.venue.name, cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"
+            event.venue.name if event.venue else "", cls="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell"
         ),
         Td(_ds_short(event.date), cls="px-3 py-4 text-sm text-gray-500"),
         Td(

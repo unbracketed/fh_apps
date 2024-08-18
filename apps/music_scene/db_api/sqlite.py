@@ -93,7 +93,7 @@ def list_events(join_venues=False) -> List[Event]:
                 f"{row['title']} - {row['artist']}" if row["artist"] else row["title"]
             )
             prepped_events.append(Event(**row))
-            return prepped_events
+        return prepped_events
 
     events_table = get_events_table()
     return [Event(**row) for row in events_table.rows]

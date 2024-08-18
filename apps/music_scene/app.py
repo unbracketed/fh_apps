@@ -28,7 +28,7 @@ app, rt = fast_app(
     exception_handlers=exception_handlers,
     htmlkw={"cls": "h-full"},
     bodykw={"cls": "h-full"},
-    live=True,
+    # live=True,
 )
 
 

@@ -9,7 +9,7 @@ from apps.music_scene.components.events import (
 from apps.music_scene.components.forms import EventForm
 from apps.music_scene.components.layout import StackedLayout
 from apps.music_scene.models import Event
-from apps.music_scene.db_api import upcoming_events, list_events
+from apps.music_scene.db_api import upcoming_events, list_events, create_event
 
 
 def home_view(request: Request):
@@ -48,18 +48,17 @@ def add_event_handler(
     venue_id: str,
     description: str,
 ) -> FT:
-    venue = venues[venue_id].name
     new_event = dict(
         title=title,
         artist=artist,
         date=date,
         start_time=start_time,
-        venue=venue,
-        url=url,
-        description=description,
+        venue_id=venue_id,
+        # url=url,
+        # description=description,
     )
-    events.insert(new_event)
-    return EventsTable(events(order_by="date"))
+    create_event(**new_event)
+    return EventsTable(list_events(join_venues=True))
 
 
 def event_detail(event_id: int) -> FT:

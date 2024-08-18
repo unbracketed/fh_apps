@@ -9,8 +9,8 @@ def EventForm(action, form_heading="", submit_label="Save", event_id=None):
     selected_venue_id = None
     if event_id:
         event = get_event(event_id)
-        if event.venue:
-            selected_venue_id = venues.lookup({"name": event.venue})
+        if event.venue_id:
+            selected_venue_id = event.venue_id
     return Div(
         id=f"event-form-{event_id}",
         cls="py-4 px-2 bg-orange-200 border-solid border-2 border-orange-600",
