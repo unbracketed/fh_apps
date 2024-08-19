@@ -1,5 +1,5 @@
 from typing import Sequence
-
+from datetime import date
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import make_transient
 from sqlmodel import SQLModel, create_engine, select, Session, col, or_, func
@@ -53,7 +53,7 @@ def upcoming_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
 
 def create_event(
     title: str,
-    date: str,
+    date: date,
     artist: str = None,
     start_time: str = None,
     venue_id: int = None,

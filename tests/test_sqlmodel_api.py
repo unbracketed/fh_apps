@@ -104,7 +104,8 @@ def test_create_venue_with_events(db_engine, db_session):
         assert len(retrieved_venue.events) == 2
         assert retrieved_venue.events[0].title in ["Event 1", "Event 2"]
         assert retrieved_venue.events[1].title in ["Event 1", "Event 2"]
-
+        assert retrieved_venue.events[1].date == date.today()
+        assert retrieved_venue.events[1].venue_id == venue.id
 
 def test_list_venues(db_session):
     from apps.music_scene.db_api.sqlmodel_api import list_venues
