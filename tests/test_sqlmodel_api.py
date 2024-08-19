@@ -11,16 +11,20 @@ from apps.music_scene.db_api.sqlmodel_api import get_venue, create_venue, update
 from apps.music_scene.models import Venue
 
 
+@pytest.fixture
+def db_engine():
+    # Create an in-memory SQLite database
+    engine = create_engine("sqlite:///:memory:")
+    SQLModel.metadata.create_all(engine)
+    return engine
+
 @pytest.fixture(scope="function")
-def db_session():
+def db_session(db_engine):
 
     # Register models
     from apps.music_scene.models import Venue, Event
 
-    # Create an in-memory SQLite database
-    engine = create_engine("sqlite:///:memory:")
-    SQLModel.metadata.create_all(engine)
-    session = Session(engine)
+    session = Session(db_engine)
 
     # Mock get_session function to return mock session object
     with patch('apps.music_scene.db_api.sqlmodel_api.get_session', return_value=session) as mock_get_session:
@@ -83,16 +87,23 @@ def test_delete_nonexistent_venue(db_session):
         delete_venue(non_existent_venue)
 
 
-def test_create_venue_with_events(db_session):
+def test_create_venue_with_events(db_engine, db_session):
     from apps.music_scene.db_api.sqlmodel_api import create_event
+    from sqlmodel import select, Session
+    from sqlalchemy.orm import selectinload
+
     venue = create_venue(name="Venue with Events")
     create_event(title="Event 1", date=date.today(), venue_id=venue.id)
     create_event(title="Event 2", date=date.today(), venue_id=venue.id)
-    make_transient(venue)
-    retrieved_venue = get_venue(venue.id)
-    assert len(retrieved_venue.events) == 2
-    assert retrieved_venue.events[0].title in ["Event 1", "Event 2"]
-    assert retrieved_venue.events[1].title in ["Event 1", "Event 2"]
+
+    # Use a new session to ensure we're not working with cached data
+    with Session(db_engine) as session:
+        statement = select(Venue).options(selectinload(Venue.events)).where(Venue.id == venue.id)
+        retrieved_venue = session.exec(statement).one()
+
+        assert len(retrieved_venue.events) == 2
+        assert retrieved_venue.events[0].title in ["Event 1", "Event 2"]
+        assert retrieved_venue.events[1].title in ["Event 1", "Event 2"]
 
 
 def test_list_venues(db_session):

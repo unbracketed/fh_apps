@@ -11,6 +11,7 @@ DEBUG = True
 
 db = None
 
+
 def get_db():
     return db if db else create_engine(DB_URL, echo=DEBUG)
 
@@ -174,7 +175,7 @@ def create_venue(
 def update_venue(venue: Venue) -> Venue:
     with get_session() as session:
         make_transient(venue)
-        #db_venue = session.merge(venue)
+        # db_venue = session.merge(venue)
         db_venue = session.exec(select(Venue).where(Venue.id == venue.id)).one()
         db_venue.name = venue.name
         db_venue.address = venue.address
