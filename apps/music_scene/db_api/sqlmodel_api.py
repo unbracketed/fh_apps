@@ -11,7 +11,6 @@ DEBUG = True
 
 db = None
 
-
 def get_db():
     return db if db else create_engine(DB_URL, echo=DEBUG)
 
@@ -151,6 +150,8 @@ def create_venue(
     website: str = None,
     description: str = None,
 ) -> Venue:
+    if not name:
+        raise ValueError("Venue name cannot be empty")
     try:
         with get_session() as session:
             venue = Venue(
@@ -173,7 +174,16 @@ def create_venue(
 def update_venue(venue: Venue) -> Venue:
     with get_session() as session:
         make_transient(venue)
-        db_venue = session.merge(venue)
+        #db_venue = session.merge(venue)
+        db_venue = session.exec(select(Venue).where(Venue.id == venue.id)).one()
+        db_venue.name = venue.name
+        db_venue.address = venue.address
+        db_venue.city = venue.city
+        db_venue.state = venue.state
+        db_venue.zip_code = venue.zip_code
+        db_venue.website = venue.website
+        db_venue.description = venue.description
+        session.add(db_venue)
         session.commit()
         session.refresh(db_venue)
         return db_venue
