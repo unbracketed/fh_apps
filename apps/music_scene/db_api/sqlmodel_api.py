@@ -9,9 +9,15 @@ from apps.music_scene.models import Event, Venue
 DB_URL = "sqlite:///music_scene_with_sqlmodel.db"
 DEBUG = True
 
+db = None
+
 
 def get_db():
-    return create_engine(DB_URL, echo=DEBUG)
+    return db if db else create_engine(DB_URL, echo=DEBUG)
+
+
+def get_session():
+    return Session(get_db())
 
 
 def init_db():
@@ -20,7 +26,7 @@ def init_db():
 
 
 def get_event(event_id: int) -> Event:
-    with Session(get_db()) as session:
+    with get_session() as session:
         event = session.exec(select(Event).where(Event.id == event_id)).one_or_none()
         if event is None:
             raise ValueError(f"Event with id {event_id} not found")
@@ -28,14 +34,14 @@ def get_event(event_id: int) -> Event:
 
 
 def list_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Event).order_by(Event.date).offset(skip).limit(limit)
         ).fetchall()
 
 
 def upcoming_events(skip: int = 0, limit: int = 100) -> Sequence[Event]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Event)
             .where(Event.date >= func.date("now"))
@@ -53,7 +59,7 @@ def create_event(
     venue_id: int = None,
 ) -> Event:
     try:
-        with Session(get_db()) as session:
+        with get_session() as session:
             event = Event(
                 title=title,
                 date=date,
@@ -71,7 +77,7 @@ def create_event(
 
 
 def update_event(event: Event) -> Event:
-    with Session(get_db()) as session:
+    with get_session() as session:
         # Detach the event from any previous session
         make_transient(event)
         # Merge the detached event with the current session
@@ -84,7 +90,7 @@ def update_event(event: Event) -> Event:
 
 
 def delete_event(event: Event) -> bool:
-    with Session(get_db()) as session:
+    with get_session() as session:
         db_event = session.exec(select(Event).where(Event.id == event.id)).one_or_none()
         if db_event is None:
             raise ValueError(f"Event with id {event.id} not found")
@@ -94,7 +100,7 @@ def delete_event(event: Event) -> bool:
 
 
 def search_events(query: str, skip: int = 0, limit: int = 100) -> Sequence[Event]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Event)
             .where(
@@ -111,7 +117,7 @@ def search_events(query: str, skip: int = 0, limit: int = 100) -> Sequence[Event
 def get_events_by_venue(
     venue_id: int, skip: int = 0, limit: int = 100
 ) -> Sequence[Event]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Event)
             .where(Event.venue_id == venue_id)
@@ -122,7 +128,7 @@ def get_events_by_venue(
 
 
 def get_venue(venue_id: int) -> Venue:
-    with Session(get_db()) as session:
+    with get_session() as session:
         venue = session.exec(select(Venue).where(Venue.id == venue_id)).one_or_none()
         if venue is None:
             raise ValueError(f"Venue with id {venue_id} not found")
@@ -130,7 +136,7 @@ def get_venue(venue_id: int) -> Venue:
 
 
 def list_venues(skip: int = 0, limit: int = 100) -> Sequence[Venue]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Venue).order_by(Venue.name).offset(skip).limit(limit)
         ).fetchall()
@@ -146,7 +152,7 @@ def create_venue(
     description: str = None,
 ) -> Venue:
     try:
-        with Session(get_db()) as session:
+        with get_session() as session:
             venue = Venue(
                 name=name,
                 address=address,
@@ -165,7 +171,7 @@ def create_venue(
 
 
 def update_venue(venue: Venue) -> Venue:
-    with Session(get_db()) as session:
+    with get_session() as session:
         make_transient(venue)
         db_venue = session.merge(venue)
         session.commit()
@@ -174,7 +180,7 @@ def update_venue(venue: Venue) -> Venue:
 
 
 def delete_venue(venue: Venue) -> bool:
-    with Session(get_db()) as session:
+    with get_session() as session:
         db_venue = session.exec(select(Venue).where(Venue.id == venue.id)).one_or_none()
         if db_venue is None:
             raise ValueError(f"Venue with id {venue.id} not found")
@@ -184,7 +190,7 @@ def delete_venue(venue: Venue) -> bool:
 
 
 def search_venues(query: str, skip: int = 0, limit: int = 100) -> Sequence[Venue]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Venue)
             .where(
@@ -200,7 +206,7 @@ def search_venues(query: str, skip: int = 0, limit: int = 100) -> Sequence[Venue
 
 
 def get_venues_by_city(city: str, skip: int = 0, limit: int = 100) -> Sequence[Venue]:
-    with Session(get_db()) as session:
+    with get_session() as session:
         return session.exec(
             select(Venue)
             .where(Venue.city == city)
